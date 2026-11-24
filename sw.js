@@ -1,11 +1,18 @@
 // Sofra service worker: keeps the app working offline once it has been opened.
 // Strategy: serve from cache straight away, refresh the cache from the network in the background.
 // Bump VERSION when you change the list of core files.
-const VERSION = 'sofra-v1';
+const VERSION = 'sofra-v2';
 const CORE = [
   './',
   'index.html',
+  'styles.css',
   'recipes.js',
+  'recipes-tr.js',
+  'i18n.js',
+  'subs.js',
+  'pantry.js',
+  'draw.js',
+  'app.js',
   'manifest.webmanifest',
   'icons/icon-192.png',
   'icons/icon-512.png',

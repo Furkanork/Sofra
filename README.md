@@ -2,18 +2,25 @@
 
 ![Sofra](og-image.png)
 
-A recipe box of home cooking from Turkish, Persian, Italian, Greek and Russian & Ukrainian kitchens, plus a few bakes from further afield. 77 recipes, from soups and meze to mains and desserts.
+A recipe box of home cooking from Turkish, Persian, Italian, Greek, Russian & Ukrainian, Lebanese, Georgian, Azerbaijani and Balkan kitchens, plus a few bakes from further afield. 96 recipes, from breakfast and soups to meze, mains and desserts. In English or Turkish.
 
 **Open it:** https://furkanork.github.io/Sofra/
 
 ## What it does
 
 - **Browse** by cuisine and course, or search by dish or ingredient ("feta", "saffron", "tvorog").
+- **Filter by diet:** vegetarian, vegan, gluten-free or 30 minutes or less. Worked out from the ingredients.
 - **Scale** any recipe with − and +. Every amount recalculates.
-- **Swap** an ingredient you don't have and get a substitute with the right amount, such as baking powder for soda or milk and butter for double cream.
-- **Tick off** ingredients and steps as you cook, **save** favourites and **copy a shopping list**.
-- **Add your own recipes.** They're saved on your device.
-- **Works offline** once it has been opened, and installs on your phone's home screen like an app.
+- **Swap** an ingredient you don't have and get a substitute with the right amount.
+- **Cook mode:** one step at a time in big text, swipe between steps, screen stays on. Steps that mention a time get a timer button, with an alarm.
+- **What can I make?** Tick what's in your kitchen and see which recipes you can make, best matches first, including ones where a swap covers the gap.
+- **Plan & shop:** add recipes to your week and get one shopping list with amounts added together, sorted by shop section, leaving out what's already in your pantry.
+- **Notes and photos** on any recipe. A photo can become the recipe's cover.
+- **Share** a recipe or your shopping list to WhatsApp, Messages and so on.
+- **Measures:** grams and millilitres, US cups, or the Turkish su bardağı (200 ml).
+- **Türkçe:** the whole interface in Turkish, with Turkish-kitchen recipes fully translated.
+- **Backup and restore** everything you've added as a file, so a new phone starts where the old one left off.
+- **Add your own recipes**, and it **works offline** once installed on your phone.
 
 ## Put it on your phone
 
@@ -26,14 +33,23 @@ A recipe box of home cooking from Turkish, Persian, Italian, Greek and Russian &
 1. Open https://furkanork.github.io/Sofra/ in Chrome.
 2. Tap **Install app** when it's offered, or the ⋮ menu → **Add to Home screen** → **Install**.
 
-Your saved recipes, favourites and own recipes stay in that browser on that phone. They don't sync between devices.
+Everything you add or save stays in that browser on that phone and doesn't sync between devices. Use **More → Backup** to save a file and restore it elsewhere.
+
+Timers ring while Sofra is open on screen; phones pause web apps in the background.
 
 ## Files
 
 | File | What it is |
 |---|---|
-| `index.html` | The whole app: layout, drawings, filters, scaling and swaps |
+| `index.html` | Page layout and dialogs |
+| `styles.css` | All styling |
+| `app.js` | App logic: list, recipe page, cook mode, timers, pantry, plan, backup, language, measures |
 | `recipes.js` | All the recipe data |
+| `recipes-tr.js` | Turkish recipe translations |
+| `i18n.js` | Turkish interface text |
+| `subs.js` | Ingredient swap suggestions |
+| `pantry.js` | Pantry ingredients and shop sections |
+| `draw.js` | The dish drawings |
 | `manifest.webmanifest` | App name, colours and icons for installing on a phone |
 | `sw.js` | Service worker that keeps the app working offline |
 | `icons/` | Home-screen icons and favicon |
@@ -52,10 +68,12 @@ Add an entry to `recipes.js`:
  tip:'Optional tip.'},
 ```
 
-- `course` is one of `soups`, `meze`, `mains`, `pasta`, `bakes` or `desserts`.
+- `course` is one of `breakfast`, `soups`, `meze`, `mains`, `pasta`, `bakes` or `desserts`.
 - Each ingredient is `[amount, unit, name]`. Use an amount of `0` for "to taste". Units: `g`, `kg`, `ml`, `l`, `tsp`, `tbsp`, or `''` for a count.
 - A string starting with `#` is a section heading.
 - `art.t` picks the drawing: `slice`, `bowl`, `heap`, `pan`, `flat`, `dumpl`, `skewer`, `veg`, `stack`, `pastry`, `cookie`, `tray`, `dome`, `toast` or `loaf`. Copy the `art` of a similar dish to start.
+
+To translate a recipe, add an entry to `recipes-tr.js` with `name`, `local`, and `ing` and `steps` arrays of the same length and order as the English (headings included).
 
 After changing files, bump `VERSION` in `sw.js` so installed copies pick up the update.
 
