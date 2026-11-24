@@ -2,7 +2,7 @@
 // Strategy: network first, so a phone always gets the newest version when it is online;
 // the saved copy is used only when the network is unavailable.
 // Bump VERSION whenever you publish changes, so installed phones refresh straight away.
-const VERSION = 'sofra-v3';
+const VERSION = 'sofra-v4';
 const CORE = [
   './',
   'index.html',
@@ -32,16 +32,24 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil((async () => {
+  let hadOld = false;
+  const ready = (async () => {
     const keys = await caches.keys();
+    hadOld = keys.some(k => k !== VERSION);
     await Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k)));
     await self.clients.claim();
-    // Pages still showing an older version reload themselves onto the new one.
-    if (keys.some(k => k !== VERSION)) {
-      const wins = await self.clients.matchAll({ type: 'window' });
-      for (const w of wins) { try { await w.navigate(w.url); } catch (e) {} }
-    }
-  })());
+  })();
+  event.waitUntil(ready);
+  // Pages still showing an older version reload onto the new one. This must start only after
+  // activation has finished: a reload started during activation would wait on it forever.
+  ready.then(() => {
+    if (!hadOld) return;
+    setTimeout(() => {
+      self.clients.matchAll({ type: 'window' })
+        .then(wins => wins.forEach(w => { try { w.navigate(w.url).catch(() => {}); } catch (e) {} }))
+        .catch(() => {});
+    }, 0);
+  });
 });
 
 self.addEventListener('fetch', event => {
