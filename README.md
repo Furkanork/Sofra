@@ -2,13 +2,13 @@
 
 ![Sofra](og-image.png)
 
-A recipe box of home cooking from Turkish, Persian, Italian, Greek, Russian & Ukrainian, Lebanese, Georgian, Azerbaijani and Balkan kitchens, plus a few bakes from further afield. 111 recipes, from breakfast and soups to meze, mains and desserts. In English or Turkish.
+A recipe box of home cooking from Turkish, Persian, Italian, Greek, Russian & Ukrainian, Lebanese, Georgian, Azerbaijani and Balkan kitchens, plus a few bakes from further afield. 141 recipes, from breakfast and soups to meze, mains and desserts. In English or Turkish.
 
 **Open it:** https://furkanork.github.io/Sofra/
 
 ## What it does
 
-- **Browse** by cuisine and course, or search by dish or ingredient ("feta", "saffron", "tvorog").
+- **Browse** by cuisine and course, or search by dish or ingredient ("feta", "saffron", "tvorog"). Search ignores accents, so "kunefe" finds Künefe. **Surprise me** picks a random recipe.
 - **Filter by diet:** vegetarian, vegan, gluten-free or 30 minutes or less. Worked out from the ingredients.
 - **Scale** any recipe with − and +. Every amount recalculates.
 - **Swap** an ingredient you don't have and get a substitute with the right amount.

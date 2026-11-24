@@ -7,6 +7,7 @@ tr:{
 'missing':'eksik',
 'instead of {x}':'{x} yerine',
 'All':'Tümü',
+'Surprise me':'Bana bir şey seç',
 'Saved':'Kaydedilenler',
 'Mine':'Benimkiler',
 'Course':'Öğün',

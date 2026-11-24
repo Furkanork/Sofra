@@ -2,7 +2,7 @@
 // Strategy: network first, so a phone always gets the newest version when it is online;
 // the saved copy is used only when the network is unavailable.
 // Bump VERSION whenever you publish changes, so installed phones refresh straight away.
-const VERSION = 'sofra-v5';
+const VERSION = 'sofra-v6';
 const CORE = [
   './',
   'index.html',

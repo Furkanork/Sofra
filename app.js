@@ -128,13 +128,14 @@ function needs(r){if(!r.mine&&needCache[r.id])return needCache[r.id];const out=[
 
 /* ---------- filters and recipe list ---------- */
 const sortR=(a,b)=>(CO[a.course]-CO[b.course])||((CUIS.indexOf(a.origin)+1||99)-(CUIS.indexOf(b.origin)+1||99))||rName(a).localeCompare(rName(b));
-function searchText(r){return[r.name,r.local,rName(r),rLocal(r),r.origin,t(r.origin),CL[r.course],t(CL[r.course])].concat(r.ing.map((i,x)=>typeof i==='string'?i:i[2]+' '+rIng(r,x))).join(' ').toLowerCase()}
-function vis(){const q=st.q.trim().toLowerCase();return all().filter(r=>(st.cui==='all'||(st.cui==='saved'?fav.has(r.id):st.cui==='mine'?r.mine:r.origin===st.cui))&&(!st.course||r.course===st.course)&&[...st.diet].every(d=>diet(r)[d])&&(!q||searchText(r).includes(q))).sort(sortR)}
+const fold=s=>String(s).toLocaleLowerCase('tr').replace(/ı/g,'i').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+function searchText(r){return fold([r.name,r.local,rName(r),rLocal(r),r.origin,t(r.origin),CL[r.course],t(CL[r.course])].concat(r.ing.map((i,x)=>typeof i==='string'?i:i[2]+' '+rIng(r,x))).join(' '))}
+function vis(){const q=fold(st.q.trim());return all().filter(r=>(st.cui==='all'||(st.cui==='saved'?fav.has(r.id):st.cui==='mine'?r.mine:r.origin===st.cui))&&(!st.course||r.course===st.course)&&[...st.diet].every(d=>diet(r)[d])&&(!q||searchText(r).includes(q))).sort(sortR)}
 function renderChips(){const n={};all().forEach(r=>n[r.origin]=(n[r.origin]||0)+1);
   const orgs=Object.keys(n).sort((a,b)=>((CUIS.indexOf(a)+1||99)-(CUIS.indexOf(b)+1||99))||n[b]-n[a]);
   if(!['all','saved','mine'].includes(st.cui)&&!n[st.cui])st.cui='all';
   const chip=(k,l,c)=>`<button class="chip" type="button" data-cui="${esc(k)}" aria-pressed="${st.cui===k}">${esc(l)}${c?`<span>${c}</span>`:''}</button>`;
-  $('#chips').innerHTML=chip('all',t('All'),all().length)+orgs.map(o=>chip(o,cName(o),n[o])).join('')+chip('saved',t('Saved'),fav.size)+(mine.length?chip('mine',t('Mine'),mine.length):'')+
+  $('#chips').innerHTML=chip('all',t('All'),all().length)+orgs.map(o=>chip(o,cName(o),n[o])).join('')+chip('saved',t('Saved'),fav.size)+(mine.length?chip('mine',t('Mine'),mine.length):'')+`<button class="chip" type="button" data-surprise="1">${esc(t('Surprise me'))}</button>`+
   `<label class="sr" for="course">${t('Course')}</label><select id="course"><option value="">${t('Every course')}</option>${COURSES.map(c=>`<option value="${c[0]}"${c[0]===st.course?' selected':''}>${esc(t(c[1]))}</option>`).join('')}</select>`+
   `<span class="diets" role="group" aria-label="${esc(t('Diet'))}">${DIETS.map(d=>`<button class="chip sm" type="button" data-diet="${d[0]}" aria-pressed="${st.diet.has(d[0])}">${esc(t(d[1]))}</button>`).join('')}</span>`}
 function coverImg(r){const c=covers[r.id];return c&&coverData[r.id]?`<img src="${esc(coverData[r.id])}" alt="">`:''}
@@ -362,7 +363,7 @@ function rerender(){applyStatic();renderChips();route(false)}
 
 /* ---------- events ---------- */
 $('#q').addEventListener('input',e=>{st.q=e.target.value;if(st.view!=='recipes'){setHash('');return}renderItems()});
-$('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-cui],[data-diet]');if(!b)return;if(b.dataset.diet){const d=b.dataset.diet;st.diet.has(d)?st.diet.delete(d):st.diet.add(d)}else st.cui=b.dataset.cui;renderChips();renderItems()});
+$('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-cui],[data-diet],[data-surprise]');if(!b)return;if(b.dataset.surprise){const v=vis().filter(r=>r.id!==cur),pool=v.length?v:all();setHash(pool[Math.floor(Math.random()*pool.length)].id);return}if(b.dataset.diet){const d=b.dataset.diet;st.diet.has(d)?st.diet.delete(d):st.diet.add(d)}else st.cui=b.dataset.cui;renderChips();renderItems()});
 $('#chips').addEventListener('change',e=>{if(e.target.id==='course'){st.course=e.target.value;renderItems()}});
 $('#items').addEventListener('click',e=>{if(e.target.id==='clear'){st.q='';st.cui='all';st.course='';st.diet.clear();$('#q').value='';renderChips();renderItems()}});
 let noteT=null;

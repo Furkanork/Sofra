@@ -1,6 +1,9 @@
 /* Ingredient substitutions: [pattern on the English ingredient name, A => options]. A(mult, unit) gives the scaled amount. */
 window.SOFRA_SUBS=(function(){return [
 [/optional/,A=>['It’s optional. Leave it out and carry on.']],
+[/buckwheat/,A=>[`${A(1)} bulgur or brown rice, cooked the same way.`]],
+[/pekmez|grape molasses/,A=>[`${A(1)} date syrup, honey or maple syrup, loosened with the same water.`]],
+[/currant/,A=>[`${A(1)} raisins, chopped.`]],
 [/condensed milk/,A=>[`Simmer ${A(2,'ml')} whole milk with ${A(.7)} sugar, stirring, until reduced to ${A(1,'ml')} and syrupy. Cool before using.`]],
 [/orange blossom/,A=>[`${A(1)} rose water, or a little orange zest.`]],
 [/kadayıf|kadaif/,A=>['Very finely shredded filo: roll up the sheets and slice them as thin as you can.']],

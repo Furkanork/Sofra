@@ -23,7 +23,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Young+Serif&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css?v=5">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Young+Serif&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
 <header class="top">
@@ -80,13 +80,13 @@
   </form>
 </dialog>
 
-<script src="recipes.js?v=5"></script>
-<script src="recipes-tr.js?v=5"></script>
-<script src="i18n.js?v=5"></script>
-<script src="subs.js?v=5"></script>
-<script src="pantry.js?v=5"></script>
-<script src="draw.js?v=5"></script>
-<script src="app.js?v=5"></script>
+<script src="recipes.js?v=6"></script>
+<script src="recipes-tr.js?v=6"></script>
+<script src="i18n.js?v=6"></script>
+<script src="subs.js?v=6"></script>
+<script src="pantry.js?v=6"></script>
+<script src="draw.js?v=6"></script>
+<script src="app.js?v=6"></script>
 <script>
 // Offline support when installed on a phone; silently skipped where service workers aren't allowed.
 try{if('serviceWorker' in navigator&&location.protocol==='https:'){const had=!!navigator.serviceWorker.controller;let done=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had&&!done){done=true;location.reload()}});navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{})}}catch(e){}
