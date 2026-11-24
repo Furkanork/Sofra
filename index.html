@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sofra Recipe Box</title>
+<meta name="description" content="Home recipes from Turkish, Persian, Italian, Greek and Russian kitchens. Scale any recipe and swap what you don’t have.">
+<meta name="theme-color" content="#3b2118">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sofra">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sofra Recipe Box">
+<meta property="og:description" content="Home recipes from Turkish, Persian, Italian, Greek and Russian kitchens. Scale any recipe and swap what you don’t have.">
+<meta property="og:url" content="https://furkanork.github.io/Sofra/">
+<meta property="og:image" content="https://furkanork.github.io/Sofra/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Young+Serif&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday kitchen tool, warm and appetising, clear while your hands are floury
+   IDEA a home recipe box: index cards, each with its dish drawn on it
+   PICTURE every dish drawn plated (bowl, pan, heap, slice, skewer, dumplings); drawn large on the open card
+   COLOUR white ground, cocoa band #3b2118, butter #ffcf4d support, raspberry #c8234a accent, each recipe's own tint
+   TYPE Young Serif display + Figtree text
+   LAYOUT laptop: cocoa header with search, cuisine chips and course picker, grouped card list left, open recipe right; phone: header, card grid, tap opens the recipe */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#15100d);--ink:light-dark(#26160f,#f6ece5);--mute:light-dark(#735e53,#b8a497);--line:light-dark(#efe3db,#34261f);--surf:light-dark(#fbf5f1,#1f1612);--cocoa:light-dark(#3b2118,#28160f);--butter:#ffcf4d;--rasp:light-dark(#c8234a,#ff7392);--plate:light-dark(#ffffff,#ece3dc);--shadow:light-dark(#3b21181f,#00000070);--hm:40%}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark;--hm:24%}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--hm:24%}}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Figtree,system-ui,sans-serif;overflow-x:clip}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--butter);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:max(4vw,16px)}
+.top{background:var(--cocoa);color:#f7ebe1;padding-top:env(safe-area-inset-top,0px)}
+.wrap{padding-left:max(4vw,16px,env(safe-area-inset-left,0px));padding-right:max(4vw,16px,env(safe-area-inset-right,0px))}
+footer.wrap{padding-bottom:max(32px,env(safe-area-inset-bottom,0px))}
+.hd{display:flex;flex-wrap:wrap;gap:18px 32px;align-items:end;justify-content:space-between;padding-block:30px 18px}
+h1{font:400 clamp(40px,6vw,52px)/1.05 "Young Serif",Georgia,serif;letter-spacing:-.02em;margin:0;color:#fff7ee}
+.brand p{margin:6px 0 0;color:#e4cfc2;max-width:52ch}
+.tools{display:flex;gap:10px;flex:1 1 360px;max-width:580px}
+#q{flex:1;height:48px;border-radius:999px;border:0;padding:0 20px;font-size:16px;background:#fff7f0;color:#26160f}
+.butter{min-height:48px;padding:0 20px;border:0;border-radius:999px;background:var(--butter);color:#2a170f;font-weight:700;white-space:nowrap}
+.butter:hover{background:#ffd966}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-block:2px 22px}
+.chip,#course{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid #7a5646;background:transparent;color:#f7ebe1;font-weight:600}
+.chip:hover{border-color:#f7ebe1}
+.chip span{font-weight:400;opacity:.75;margin-inline-start:4px}
+.chip[aria-pressed=true]{background:#fff7ee;color:#3b2118;border-color:#fff7ee}
+#course{background:var(--cocoa);margin-inline-start:auto}
+.app{display:grid;grid-template-columns:minmax(280px,360px) minmax(0,1fr);max-width:1240px;margin:0 auto}
+.list{position:sticky;top:0;align-self:start;max-height:100svh;overflow:auto;border-right:1px solid var(--line);padding:16px 12px 40px max(4vw - 8px,10px)}
+.count{font-size:14px;color:var(--mute);margin:4px 8px 4px}
+.gh{margin:18px 8px 6px;font-weight:700;font-size:15px;color:var(--rasp)}
+.gh span{color:var(--mute);font-weight:400}
+.item{display:grid;grid-template-columns:104px minmax(0,1fr);gap:14px;align-items:center;padding:8px;border-radius:16px;text-decoration:none;color:inherit}
+.item:hover{background:var(--surf)}
+.item[aria-current=true]{background:color-mix(in srgb,var(--tint) var(--hm),var(--bg))}
+.pic{display:block;aspect-ratio:8/5;border-radius:12px;background:color-mix(in srgb,var(--tint) var(--hm),var(--bg));overflow:hidden}
+.pic svg{display:block;width:100%;height:100%}
+.item b{display:block;font-weight:700;line-height:1.25}
+.item small{display:block;color:var(--mute);font-size:13px;margin-top:2px}
+.heart{color:var(--rasp)}
+.empty{padding:24px 8px;color:var(--mute)}
+.empty button{margin-top:10px;min-height:44px;border-radius:999px;border:1px solid var(--line);background:var(--surf);padding:0 16px}
+.detail{padding:24px clamp(16px,3vw,44px) 56px}
+.back{display:none;align-items:center;gap:6px;min-height:44px;margin-bottom:12px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--surf);font-weight:600}
+.hero{position:relative;height:clamp(230px,32vw,340px);border-radius:22px;background:color-mix(in srgb,var(--tint) var(--hm),var(--bg));overflow:hidden}
+.hero svg{position:absolute;inset:0;width:100%;height:100%}
+.head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:14px 20px;margin-top:22px}
+h2{font:400 clamp(34px,5vw,48px)/1.05 "Young Serif",Georgia,serif;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.local{margin:6px 0 0;color:var(--mute)}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.ghost{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--bg);font-weight:600;display:inline-flex;align-items:center;gap:8px}
+.ghost:hover{border-color:var(--mute)}
+.ghost[aria-pressed=true]{border-color:var(--rasp);color:var(--rasp)}
+.ghost svg{width:18px;height:18px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(8.5em,1fr));margin:20px 0 0;border-block:1px solid var(--line)}
+.facts div{padding:12px 0}
+dt{font-size:13px;color:var(--mute)}
+dd{margin:0;font-weight:700;white-space:nowrap}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:clamp(24px,4vw,48px);margin-top:28px;align-items:start}
+.ing{background:var(--surf);border-radius:20px;padding:20px}
+h3{font:400 24px/1.1 "Young Serif",Georgia,serif;margin:0}
+.ih{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}
+.scale{display:flex;align-items:center;gap:4px}
+.scale button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--bg);font-size:22px;line-height:1}
+.scale output{min-width:7em;text-align:center;font-weight:700;white-space:nowrap}
+.ings{list-style:none;padding:0;margin:12px 0 16px}
+.ings li{border-bottom:1px solid var(--line)}
+.ings li.grp{border:0}
+.ings .row{display:flex;align-items:flex-start;gap:4px}
+.ings label{flex:1;display:flex;gap:10px;align-items:flex-start;padding:9px 0;cursor:pointer}
+.sw{flex:none;min-height:44px;padding:0 10px;border:0;border-radius:10px;background:transparent;color:var(--rasp);font-weight:700;font-size:14px;white-space:nowrap}
+.sw:hover{background:color-mix(in srgb,var(--rasp) 10%,transparent)}
+.ings li.missing label{color:var(--mute);text-decoration:line-through}
+.ings li.swapped .q{color:var(--rasp)}
+.was{display:block;font-size:13px;color:var(--mute);text-decoration:line-through}
+.subs{margin:0 0 12px;padding:12px;border-radius:14px;background:var(--bg);border:1px solid var(--line)}
+.subs p{margin:0 0 4px;font-size:14px;font-weight:700}
+.opt{display:block;width:100%;text-align:start;min-height:44px;margin-top:6px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surf);line-height:1.4}
+.opt:hover{border-color:var(--rasp)}
+.ings input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--rasp)}
+.ings .q{font-weight:700;min-width:4.6em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.ings input:checked~span{text-decoration:line-through;color:var(--mute)}
+.ings .grp{font-weight:700;color:var(--rasp);font-size:14px;padding:16px 0 2px}
+.ings .grp:first-child{padding-top:0}
+.steps{list-style:none;padding:0;margin:12px 0;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.steps li::before{content:counter(s);width:36px;height:36px;border-radius:50%;background:var(--cocoa);color:var(--butter);display:grid;place-items:center;font-family:"Young Serif",Georgia,serif}
+.steps li.done{color:var(--mute)}
+.steps li.done::before{content:"✓";background:var(--rasp);color:#fff}
+.tip{margin:16px 0 0;padding:14px 16px;border-radius:14px;background:color-mix(in srgb,var(--butter) 28%,var(--bg))}
+.hint{font-size:14px;color:var(--mute);margin:0}
+footer{border-top:1px solid var(--line);color:var(--mute);font-size:14px;padding-block:20px 32px}
+dialog{border:0;border-radius:22px;padding:0;width:min(660px,calc(100vw - 24px));max-height:calc(100svh - 24px);background:var(--bg);color:var(--ink)}
+dialog::backdrop{background:#1c0f0aa6}
+.fm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:24px}
+.fm h3,.fm .full{grid-column:1/-1}
+.fm label{display:grid;gap:4px;font-weight:600;font-size:14px}
+.fm input,.fm select,.fm textarea{font-size:16px;font-weight:400;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surf);width:100%}
+.fm textarea{min-height:120px;resize:vertical}
+.fm .row{display:flex;justify-content:flex-end;gap:10px}
+.dish{animation:rise .5s ease-out}
+@keyframes rise{from{transform:translateY(10px);opacity:0}}
+@media(prefers-reduced-motion:reduce){.dish{animation:none}}
+@media(max-width:899px){
+.app{grid-template-columns:minmax(0,1fr)}
+.list{position:static;max-height:none;border:0;padding:16px max(4vw,16px) 40px}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.gh,.empty{grid-column:1/-1;margin-inline:0}
+.item{grid-template-columns:minmax(0,1fr);gap:8px;background:var(--surf);padding:10px;align-items:start}
+.item[aria-current=true]{background:var(--surf)}
+.detail{display:none}
+body.open .detail{display:block}
+body.open .list{display:none}
+.back{display:inline-flex}
+#course{margin-inline-start:0}
+}
+@media(max-width:600px){
+.cols{grid-template-columns:minmax(0,1fr)}
+.items{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tools{flex-basis:100%}
+.fm{grid-template-columns:minmax(0,1fr);padding:18px}
+.hero{border-radius:16px}
+}
+@media(max-width:360px){.items{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap hd">
+    <div class="brand">
+      <h1>Sofra</h1>
+      <p>Home cooking from the Turkish, Persian, Italian, Greek and Russian table, plus a few favourite bakes from further afield. Every recipe scales to the number you’re feeding.</p>
+    </div>
+    <div class="tools">
+      <label class="sr" for="q">Search recipes</label>
+      <input id="q" type="search" placeholder="Search a dish or an ingredient" autocomplete="off">
+      <button id="add" class="butter" type="button">Add a recipe</button>
+    </div>
+  </div>
+  <div class="wrap chips" id="chips" role="toolbar" aria-label="Filter recipes"></div>
+</header>
+<main class="app" id="main">
+  <aside class="list" aria-label="Recipes"><p class="count" id="count"></p><div class="items" id="items"></div></aside>
+  <article class="detail" id="detail" aria-live="polite"></article>
+</main>
+<footer class="wrap">Quantities are metric; a Turkish su bardağı is about 200 ml. Tick ingredients and steps as you go. Recipes you add are kept in this browser only.</footer>
+
+<dialog id="dlg">
+  <form class="fm" id="fm" method="dialog">
+    <h3 id="fmTitle">Add a recipe</h3>
+    <label class="full" for="f-name">Name<input id="f-name" required maxlength="80" placeholder="Grandma’s apple cake"></label>
+    <label for="f-local">Also called<input id="f-local" maxlength="80" placeholder="Elmalı kek"></label>
+    <label for="f-origin">Cuisine<input id="f-origin" maxlength="40" placeholder="Turkish" list="cuisines"></label>
+    <datalist id="cuisines"><option value="Turkish"><option value="Persian"><option value="Italian"><option value="Greek"><option value="Russian &amp; Ukrainian"></datalist>
+    <label for="f-course">Course<select id="f-course"><option value="soups">Soup</option><option value="meze">Meze or salad</option><option value="mains">Main</option><option value="pasta">Pasta, rice or dumplings</option><option value="bakes">Bread, pastry or pancakes</option><option value="desserts">Dessert</option></select></label>
+    <label for="f-look">Draw it as<select id="f-look"><option value="cake">Layered slice</option><option value="soup">Bowl of soup</option><option value="plate">Plated heap</option><option value="pan">Pan</option><option value="dumplings">Dumplings</option><option value="flat">Flatbread or pizza</option><option value="cookie">Cookies</option><option value="pudding">Pudding</option><option value="pastry">Stack of pancakes</option></select></label>
+    <label for="f-serves">Makes<input id="f-serves" type="number" min="1" max="200" value="4" required></label>
+    <label for="f-unit">Of<input id="f-unit" maxlength="20" value="servings"></label>
+    <label for="f-time">Total time, minutes<input id="f-time" type="number" min="1" max="4000" value="60" required></label>
+    <label for="f-active">Hands-on, minutes<input id="f-active" type="number" min="1" max="4000" value="20" required></label>
+    <label class="full" for="f-ing">Ingredients, one per line<textarea id="f-ing" required placeholder="#Sauce&#10;2 tbsp olive oil&#10;400 g tomatoes&#10;1 onion, chopped"></textarea></label>
+    <label class="full" for="f-steps">Steps, one per line<textarea id="f-steps" required placeholder="Soften the onion in the oil.&#10;Add the tomatoes and simmer 20 minutes."></textarea></label>
+    <label class="full" for="f-tip">Tip (optional)<input id="f-tip" maxlength="240"></label>
+    <p class="hint full">Start a line with # for a heading such as #Syrup. Write amounts first (200 g, 2 tbsp, ½ tsp) so they scale.</p>
+    <div class="row full"><button type="button" class="ghost" id="cancel">Cancel</button><button type="submit" class="butter">Save recipe</button></div>
+  </form>
+</dialog>
+
+<script src="recipes.js"></script>
+<script>
+{
+const R=Array.isArray(window.SOFRA_RECIPES)?window.SOFRA_RECIPES:[];
+const COURSES=[['soups','Soups'],['meze','Meze & salads'],['mains','Mains'],['pasta','Pasta, rice & dumplings'],['bakes','Breads, pastry & pancakes'],['desserts','Desserts']];
+const CL=Object.fromEntries(COURSES),CO=Object.fromEntries(COURSES.map((c,i)=>[c[0],i]));
+const CUIS=['Turkish','Persian','Italian','Greek','Russian & Ukrainian'];
+const LOOKS={
+ cake:{art:{t:'slice',L:[['#c99560',30],['#f5e9d6',18],['#c99560',30]],top:'#e9cfa6',deco:'dust',dc:'#a86e3c'},tint:'#f3d9b8'},
+ soup:{art:{t:'bowl',b:'#ffffff',c:'#d9752e',pc:[['cube','#f0973a',8,.8],['leaf','#3d7a28',6]]},tint:'#f7c59a'},
+ plate:{art:{t:'heap',base:'#e9cf8f',H:28,R:68,pc:[['cube','#d6372a',10],['leaf','#3f7f2d',8],['grain','#fffaf0',30]]},tint:'#f4e4b8'},
+ pan:{art:{t:'pan',base:'#c94a2a',pc:[['blob','#f3c43b',6,1.1],['ring','#4c8f2c',6],['leaf','#3f7a2a',4]]},tint:'#fbd0a6'},
+ dumplings:{art:{t:'dumpl',v:'round',c:'#f5e9d2',dollop:true,pc:[['leaf','#4d8a2c',8]]},tint:'#f1dccb'},
+ flat:{art:{t:'flat',crust:'#e9b064',base:'#c9321f',pc:[['blob','#fbf6ea',7,1.4],['leaf','#2f7a26',6,1.3]]},tint:'#f6c9b8'},
+ cookie:{art:{t:'cookie',c:'#d9a45f',ch:'#5a3320',v:'chip'},tint:'#f6dfba'},
+ pudding:{art:{t:'bowl',b:'#ffffff',c:'#f3e3c3',deco:'crumb',dc:'#a0663b'},tint:'#f2e3cf'},
+ pastry:{art:{t:'stack',c:'#e0a95a'},tint:'#f8dcae'}};
+const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let mine=LS.get('sofra-mine',[]);if(!Array.isArray(mine))mine=[];
+mine.forEach(r=>{if(!CL[r.course])r.course='desserts'});
+const fav=new Set(LS.get('sofra-fav',[]));
+const st={q:'',cui:'all',course:'',sv:{},miss:{}};
+let cur=null,editing=null;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const all=()=>R.concat(mine);
+const find=id=>all().find(r=>r.id===id);
+const clearHash=()=>{try{history.pushState(null,'',location.pathname+location.search)}catch(e){location.hash=''}};
+const hexOk=h=>/^#[0-9a-f]{6}$/i.test(h)?h:'#cccccc';
+/* ---------- drawing ---------- */
+function shade(h,a){const n=parseInt(hexOk(h).slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;const t=a<0?0:255,p=Math.abs(a);r=Math.round(r+(t-r)*p);g=Math.round(g+(t-g)*p);b=Math.round(b+(t-b)*p);return'#'+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1)}
+function rng(str){let s=7;for(const c of str)s=(s*31+c.charCodeAt(0))%2147483646;s+=1;return()=>(s=s*16807%2147483647)/2147483647}
+const f1=n=>n.toFixed(1);
+const plate='<ellipse cx="120" cy="138" rx="104" ry="13" style="fill:var(--shadow)"/><ellipse cx="120" cy="133" rx="100" ry="14" style="fill:var(--plate)"/><ellipse cx="120" cy="133" rx="74" ry="9" style="fill:var(--shadow);opacity:.35"/>';
+function piece(sh,c0,x,y,s,rand){const c=hexOk(c0),rot=f1(rand()*180),X=f1(x),Y=f1(y);
+  switch(sh){
+  case'dot':return`<circle cx="${X}" cy="${Y}" r="${f1((.8+rand()*1.2)*s)}" fill="${c}"/>`;
+  case'cube':{const w=7*s,h=6*s;return`<rect x="${f1(x-w/2)}" y="${f1(y-h/2)}" width="${f1(w)}" height="${f1(h)}" rx="1.2" fill="${shade(c,-.15)}"/><rect x="${f1(x-w/2)}" y="${f1(y-h/2)}" width="${f1(w)}" height="${f1(h*.45)}" rx="1" fill="${shade(c,.12)}"/>`}
+  case'leaf':return`<ellipse cx="${X}" cy="${Y}" rx="${f1(5*s)}" ry="${f1(2*s)}" fill="${c}" transform="rotate(${rot} ${X} ${Y})"/>`;
+  case'ring':return`<ellipse cx="${X}" cy="${Y}" rx="${f1(6*s)}" ry="${f1(3*s)}" fill="none" stroke="${c}" stroke-width="${f1(1.8*s)}" transform="rotate(${f1(rand()*40-20)} ${X} ${Y})"/>`;
+  case'block':return`<rect x="${f1(x-17)}" y="${f1(y-6)}" width="34" height="11" fill="${shade(c,-.12)}"/><polygon points="${f1(x-17)},${f1(y-6)} ${f1(x+17)},${f1(y-6)} ${f1(x+23)},${f1(y-13)} ${f1(x-11)},${f1(y-13)}" fill="${c}"/><polygon points="${f1(x+17)},${f1(y-6)} ${f1(x+23)},${f1(y-13)} ${f1(x+23)},${f1(y-2)} ${f1(x+17)},${f1(y+5)}" fill="${shade(c,-.2)}"/>`;
+  case'grain':return`<ellipse cx="${X}" cy="${Y}" rx="${f1(2.4*s)}" ry="${f1(1.1*s)}" fill="${c}" transform="rotate(${rot} ${X} ${Y})"/>`;
+  case'ball':{const r=5*s;return`<circle cx="${X}" cy="${f1(y+1)}" r="${f1(r)}" fill="${shade(c,-.22)}"/><circle cx="${X}" cy="${f1(y-.4)}" r="${f1(r*.88)}" fill="${c}"/><circle cx="${f1(x-r*.35)}" cy="${f1(y-r*.4)}" r="${f1(r*.28)}" fill="#fff" opacity=".45"/>`}
+  case'log':{const w=16*s,h=7*s,t=`rotate(${f1(rand()*50-25)} ${X} ${Y})`;return`<g transform="${t}"><rect x="${f1(x-w/2)}" y="${f1(y-h/2+1.5)}" width="${f1(w)}" height="${f1(h)}" rx="${f1(h/2)}" fill="${shade(c,-.3)}"/><rect x="${f1(x-w/2)}" y="${f1(y-h/2)}" width="${f1(w)}" height="${f1(h)}" rx="${f1(h/2)}" fill="${c}"/><rect x="${f1(x-w/3)}" y="${f1(y-h/2+1)}" width="${f1(w/2)}" height="1.6" rx=".8" fill="#fff" opacity=".25"/></g>`}
+  case'half':{const r=6*s;return`<g transform="rotate(${f1(rand()*60-30)} ${X} ${Y})"><path d="M${f1(x-r)},${Y} A${f1(r)},${f1(r)} 0 0 1 ${f1(x+r)},${Y} Z" fill="${c}"/><path d="M${f1(x-r*.68)},${Y} A${f1(r*.68)},${f1(r*.68)} 0 0 1 ${f1(x+r*.68)},${Y} Z" fill="${shade(c,.3)}"/></g>`}
+  case'strand':return`<path d="M${f1(x-14*s)},${Y} q${f1(4.5*s)},${f1(-5*s)} ${f1(9*s)},0 t${f1(9*s)},0 t${f1(9*s)},0" stroke="${c}" stroke-width="${f1(2.6*s)}" fill="none" stroke-linecap="round" transform="rotate(${f1(rand()*70-35)} ${X} ${Y})"/>`;
+  case'blob':return`<ellipse cx="${X}" cy="${Y}" rx="${f1((4+rand()*3)*s)}" ry="${f1((3+rand()*2)*s)}" fill="${c}" transform="rotate(${rot} ${X} ${Y})"/>`;
+  case'wedge':return`<g transform="rotate(${f1(rand()*50-25)} ${X} ${Y})"><path d="M${f1(x-9*s)},${f1(y+3*s)} Q${X},${f1(y-9*s)} ${f1(x+9*s)},${f1(y+3*s)} Z" fill="${c}"/><path d="M${f1(x-9*s)},${f1(y+3*s)} Q${X},${f1(y-9*s)} ${f1(x+9*s)},${f1(y+3*s)}" stroke="${shade(c,-.35)}" stroke-width="1.5" fill="none"/></g>`;
+  }return''}
+function scatterE(cx,cy,rx,ry,pc,rand){const it=[];for(const p of pc||[]){const[sh,c,n,s]=p;for(let i=0;i<n;i++){let x,y;if(sh==='block'){x=cx;y=cy-ry*.1}else{const t=rand()*6.283,m=Math.sqrt(rand())*.88;x=cx+Math.cos(t)*m*rx;y=cy+Math.sin(t)*m*ry}it.push([y,piece(sh,c,x,y,s||1,rand)])}}
+  return it.sort((a,b)=>a[0]-b[0]).map(a=>a[1]).join('')}
+function slice(a,rand){const x0=48,w=112,dx=36,dy=20;let y=132,o='';
+  for(const[c0,h]of a.L){const c=hexOk(c0);o+=`<rect x="${x0}" y="${y-h}" width="${w}" height="${h+.5}" fill="${c}"/><polygon points="${x0+w},${y} ${x0+w+dx},${y-dy} ${x0+w+dx},${y-h-dy} ${x0+w},${y-h}" fill="${shade(c,-.24)}"/>`;y-=h}
+  const top=hexOk(a.top),d=a.deco||'';
+  o+=`<polygon points="${x0},${y} ${x0+w},${y} ${x0+w+dx},${y-dy} ${x0+dx},${y-dy}" fill="${top}"/><line x1="${x0}" y1="${y}" x2="${x0+w}" y2="${y}" stroke="${shade(top,.28)}" stroke-width="1.5"/>`;
+  const pt=()=>{const u=rand(),v=rand();return[x0+4+u*(w-8)+v*dx,y-2-v*(dy-4)]};
+  if(d.includes('drip')){o+=`<rect x="${x0}" y="${y-1}" width="${w}" height="5" fill="${top}"/>`;for(let i=0;i<8;i++)o+=`<rect x="${x0+4+i*14}" y="${y}" width="9" height="${f1(6+rand()*16)}" rx="4.5" fill="${top}"/>`}
+  if(d.includes('gloss'))o+=`<path d="M${x0+14},${y-4} L${x0+64},${y-4} L${x0+84},${y-dy+4} L${x0+34},${y-dy+4}Z" fill="#fff" opacity=".2"/>`;
+  if(d.includes('dust'))for(let i=0;i<70;i++){const[px,py]=pt();o+=`<circle cx="${f1(px)}" cy="${f1(py)}" r="${f1(.7+rand()*1.2)}" fill="${a.dc}"/>`}
+  if(d.includes('dimple')){for(let i=0;i<26;i++){const[px,py]=pt();o+=`<ellipse cx="${f1(px)}" cy="${f1(py)}" rx="3.2" ry="1.6" fill="${shade(top,-.25)}"/>`}for(let i=0;i<7;i++){const[px,py]=pt();o+=piece('leaf',a.dc,px,py,.8,rand)}}
+  if(d.includes('crackle'))for(let i=0;i<14;i++){const[px,py]=pt();o+=`<path d="M${f1(px)},${f1(py)} l${f1(6+rand()*10)},${f1(rand()*3-1.5)} l${f1(4+rand()*6)},${f1(rand()*3-1.5)}" stroke="${a.dc}" stroke-width="1.3" fill="none" stroke-linecap="round"/>`}
+  if(d.includes('berries'))for(let i=0;i<5;i++){const px=x0+18+i*20+rand()*8,py=y-5-rand()*10;o+=`<circle cx="${f1(px)}" cy="${f1(py+2)}" r="6.5" fill="${shade(a.dc,-.35)}"/><circle cx="${f1(px)}" cy="${f1(py)}" r="6.5" fill="${a.dc}"/><circle cx="${f1(px-2)}" cy="${f1(py-2.5)}" r="1.8" fill="#fff" opacity=".7"/>`}
+  return plate+o}
+function cookie(a,rand){const c=hexOk(a.c);let o='<ellipse cx="124" cy="132" rx="104" ry="14" style="fill:var(--shadow)"/><ellipse cx="120" cy="128" rx="100" ry="15" style="fill:var(--plate)"/>';
+  const one=(cx,cy,r,front)=>{const ry=r*.6;let s=`<ellipse cx="${cx}" cy="${cy+9}" rx="${r}" ry="${ry}" fill="${shade(c,-.28)}"/><ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="${ry}" fill="${c}"/><ellipse cx="${f1(cx-r*.25)}" cy="${f1(cy-ry*.35)}" rx="${f1(r*.5)}" ry="${f1(ry*.32)}" fill="${shade(c,.16)}" opacity=".7"/>`;
+    const n=a.v==='sugar'?40:12;for(let i=0;i<n;i++){const t=rand()*6.283,m=Math.sqrt(rand())*.82,x=cx+Math.cos(t)*m*r,y=cy+Math.sin(t)*m*ry;
+      if(a.v==='sugar')s+=`<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(.8+rand())}" fill="${a.ch}" opacity=".85"/>`;
+      else s+=`<path d="M${f1(x-4)},${f1(y)} l${f1(3+rand()*3)},-4 l5,${f1(2+rand()*2)} l-2,4 Z" fill="${a.ch}"/>`}
+    for(let i=0;i<5;i++){const t=rand()*6.283,m=.3+rand()*.4;s+=`<path d="M${f1(cx+Math.cos(t)*m*r)},${f1(cy+Math.sin(t)*m*ry)} q8,${f1(rand()*6-3)} 16,${f1(rand()*4-2)}" stroke="${shade(c,a.v==='center'?.18:-.18)}" stroke-width="1.4" fill="none" stroke-linecap="round"/>`}
+    if(front&&a.v==='center')s+=`<path d="M${cx-17},${cy+1} q3,-10 12,-9 q6,-6 13,0 q9,1 8,8 q2,8 -8,9 q-6,5 -14,1 q-12,1 -11,-9Z" fill="${a.dc}"/><ellipse cx="${cx-4}" cy="${cy-3}" rx="7" ry="3" fill="#fff" opacity=".6"/>`;
+    return s};
+  return o+one(88,90,48,false)+one(150,100,56,true)}
+let clipN=0;
+function tray(a,rand){const id='cl'+(++clipN),c=hexOk(a.c);let o=`<rect x="18" y="16" width="204" height="124" rx="12" fill="#8d8780"/><rect x="18" y="12" width="204" height="124" rx="12" fill="#c9c3bc"/><clipPath id="${id}"><rect x="28" y="21" width="184" height="106" rx="6"/></clipPath><rect x="28" y="21" width="184" height="106" rx="6" fill="${shade(c,-.35)}"/><g clip-path="url(#${id})">`;
+  for(let r=-1;r<7;r++)for(let k=-1;k<7;k++){const x=30+k*34+(r%2?17:0),y=22+r*19;o+=`<polygon points="${x},${y-9.5} ${x+17},${y} ${x},${y+9.5} ${x-17},${y}" fill="${c}" stroke="${shade(c,-.4)}" stroke-width="1.4"/><polygon points="${x},${y-8} ${x+12},${y-1} ${x-12},${y-1}" fill="${shade(c,.22)}" opacity=".7"/><ellipse cx="${x}" cy="${y}" rx="${f1(3+rand()*1.5)}" ry="2.4" fill="${a.p}"/>`}
+  return o+'</g>'}
+function bowl(a,rand){const b=hexOk(a.b),c=hexOk(a.c);let o=plate+`<path d="M54,72 Q58,134 120,134 Q182,134 186,72 Z" fill="${b}"/><path d="M120,134 Q182,134 186,72 L150,72 Q156,120 120,134Z" fill="#000" opacity=".12"/><ellipse cx="120" cy="72" rx="66" ry="15" fill="${shade(b,b==='#ffffff'?-.06:.22)}"/><ellipse cx="120" cy="72" rx="58" ry="11.5" fill="${c}"/><ellipse cx="104" cy="69" rx="26" ry="4" fill="#fff" opacity=".14"/>`;
+  if(a.deco==='brul')for(let i=0;i<11;i++){const t=rand()*6.283,m=Math.sqrt(rand())*.8;o+=`<ellipse cx="${f1(120+Math.cos(t)*m*52)}" cy="${f1(72+Math.sin(t)*m*9)}" rx="${f1(4+rand()*7)}" ry="${f1(1.6+rand()*1.6)}" fill="${a.dc}" opacity=".75"/>`}
+  else if(a.deco==='crumb')for(let i=0;i<40;i++){const t=rand()*6.283,m=Math.sqrt(rand())*.85;o+=`<circle cx="${f1(120+Math.cos(t)*m*54)}" cy="${f1(72+Math.sin(t)*m*10)}" r="${f1(.7+rand()*1.3)}" fill="${a.dc}"/>`}
+  if(a.pc)o+=scatterE(120,72,52,9,a.pc,rand);
+  if(a.deco==='swirl')o+=`<ellipse cx="114" cy="71" rx="17" ry="5.5" fill="#fbf7f0"/><ellipse cx="111" cy="69.5" rx="8" ry="2.4" fill="#fff"/>`+piece('leaf','#4d8a2c',122,69,1,rand)+piece('leaf','#4d8a2c',106,72,1,rand);
+  return o}
+function heap(a,rand){const R=a.R||70,H=a.H||30,b=hexOk(a.base);let o=plate+`<ellipse cx="120" cy="128" rx="${R}" ry="9" fill="${shade(b,-.2)}"/><path d="M${120-R},128 A${R},${H} 0 0 1 ${120+R},128 Z" fill="${b}"/><path d="M120,${128-H} A${R},${H} 0 0 1 ${120+R},128 L120,128Z" fill="#000" opacity=".07"/>`;
+  const it=[];for(const p of a.pc||[]){const[sh,c,n,s]=p;for(let i=0;i<n;i++){let x,y;if(sh==='block'){x=118;y=128-H*.82}else{const dx=(rand()*2-1)*R*.86,yt=128-H*Math.sqrt(Math.max(0,1-(dx/R)**2));x=120+dx;y=yt+2+rand()*Math.max(2,(128-yt)*.7)}it.push([y,piece(sh,c,x,y,s||1,rand)])}}
+  return o+it.sort((p,q)=>p[0]-q[0]).map(p=>p[1]).join('')}
+function pan(a,rand){const p=hexOk(a.pan||'#b5652e'),b=hexOk(a.base);return`<ellipse cx="124" cy="104" rx="104" ry="40" style="fill:var(--shadow)"/><rect x="4" y="80" width="34" height="11" rx="5.5" fill="${shade(p,-.4)}"/><rect x="202" y="80" width="34" height="11" rx="5.5" fill="${shade(p,-.4)}"/><ellipse cx="120" cy="90" rx="96" ry="46" fill="${shade(p,-.3)}"/><ellipse cx="120" cy="86" rx="96" ry="46" fill="${p}"/><ellipse cx="120" cy="88" rx="86" ry="40" fill="${shade(p,-.45)}"/><ellipse cx="120" cy="90" rx="82" ry="37" fill="${b}"/><ellipse cx="96" cy="80" rx="36" ry="9" fill="#fff" opacity=".1"/>`+scatterE(120,90,74,31,a.pc,rand)}
+function flat(a,rand){const rx=a.oval?102:90,ry=a.oval?34:44,cr=hexOk(a.crust),b=hexOk(a.base);let o=`<ellipse cx="124" cy="${96+ry*.25}" rx="${rx+4}" ry="${ry}" style="fill:var(--shadow)"/><ellipse cx="120" cy="99" rx="${rx}" ry="${ry}" fill="${shade(cr,-.3)}"/><ellipse cx="120" cy="94" rx="${rx}" ry="${ry}" fill="${cr}"/><ellipse cx="120" cy="95" rx="${rx-10}" ry="${ry-7}" fill="${b}"/>`;
+  for(let i=0;i<16;i++){const t=rand()*6.283;o+=`<ellipse cx="${f1(120+Math.cos(t)*(rx-4))}" cy="${f1(94+Math.sin(t)*(ry-3))}" rx="${f1(2+rand()*3)}" ry="1.6" fill="#5a3520" opacity=".55"/>`}
+  return o+scatterE(120,95,rx-16,ry-11,a.pc,rand)}
+function dumpl(a,rand){const c=hexOk(a.c);let o=plate;if(a.sauce)o+=`<ellipse cx="120" cy="120" rx="80" ry="17" fill="${a.sauce}"/><ellipse cx="110" cy="117" rx="50" ry="8" fill="#fff" opacity=".35"/>`;
+  let pos=[];if(a.v==='manti'){for(let i=0;i<30;i++){const t=rand()*6.283,m=Math.sqrt(rand())*.92;pos.push([120+Math.cos(t)*m*64,118+Math.sin(t)*m*12])}}
+  else pos=[[86,104],[112,100],[138,101],[162,106],[74,116],[100,114],[126,114],[152,116],[176,121],[90,127],[116,128],[142,128]];
+  pos.sort((p,q)=>p[1]-q[1]);
+  for(const[x,y]of pos){const X=f1(x),Y=f1(y);
+    if(a.v==='manti')o+=`<rect x="${f1(x-5)}" y="${f1(y-4)}" width="10" height="8" rx="3" fill="${shade(c,-.12)}"/><path d="M${f1(x-4)},${f1(y-3)} L${X},${f1(y-7)} L${f1(x+4)},${f1(y-3)}Z" fill="${c}"/>`;
+    else if(a.v==='moon')o+=`<path d="M${f1(x-15)},${f1(y+5)} Q${X},${f1(y-15)} ${f1(x+15)},${f1(y+5)} Z" fill="${shade(c,-.15)}" transform="translate(0 2)"/><path d="M${f1(x-15)},${f1(y+5)} Q${X},${f1(y-15)} ${f1(x+15)},${f1(y+5)} Z" fill="${c}" stroke="${shade(c,-.18)}" stroke-width="1.6" stroke-dasharray="2 2"/>`;
+    else o+=`<ellipse cx="${X}" cy="${f1(y+2)}" rx="13" ry="9" fill="${shade(c,-.18)}"/><ellipse cx="${X}" cy="${Y}" rx="12" ry="8" fill="${c}"/><path d="M${f1(x-7)},${f1(y-1)} q7,-6 14,0" stroke="${shade(c,-.15)}" stroke-width="1.4" fill="none"/>`}
+  if(a.dollop)o+=`<ellipse cx="146" cy="104" rx="16" ry="6" fill="#fbf7f0"/><ellipse cx="143" cy="101" rx="8" ry="3" fill="#fff"/>`;
+  return o+scatterE(120,114,62,16,a.pc,rand)}
+function skewer(a,rand){let o=plate+`<ellipse cx="112" cy="121" rx="80" ry="13" fill="${shade(a.pita,-.2)}"/><ellipse cx="110" cy="117" rx="76" ry="11" fill="${a.pita}"/><ellipse cx="66" cy="117" rx="18" ry="6" fill="#f7f4ea"/>`+piece('leaf','#5d8f3c',62,116,.7,rand)+piece('half','#f5dd5a',184,118,1.6,rand);
+  o+=`<line x1="34" y1="114" x2="208" y2="72" stroke="#c8a06a" stroke-width="3" stroke-linecap="round"/>`;
+  const cols=[a.meat,a.meat,a.v1,a.meat,a.meat,a.v2,a.meat];
+  cols.forEach((c0,i)=>{const t=(i+.5)/7,x=48+t*146,y=110-t*35,c=hexOk(c0),sz=c0===a.meat?19:13;o+=`<rect x="${f1(x-sz/2)}" y="${f1(y-sz/2+2)}" width="${sz}" height="${sz}" rx="4" fill="${shade(c,-.3)}"/><rect x="${f1(x-sz/2)}" y="${f1(y-sz/2)}" width="${sz}" height="${sz}" rx="4" fill="${c}"/><rect x="${f1(x-sz/2+2)}" y="${f1(y-sz/2+1)}" width="${sz-4}" height="3" rx="1.5" fill="${shade(c,.25)}"/>`;
+    if(c0===a.meat)for(let k=0;k<3;k++)o+=`<circle cx="${f1(x-6+rand()*12)}" cy="${f1(y-5+rand()*10)}" r="1.6" fill="#3a1a0c" opacity=".7"/>`});
+  return o}
+function veg(a,rand){let o=plate;const c=hexOk(a.c);
+  if(a.v==='tomato'){const c2=hexOk(a.c2);
+    o+=`<ellipse cx="76" cy="102" rx="20" ry="28" fill="${shade(c2,-.15)}"/><ellipse cx="74" cy="100" rx="18" ry="26" fill="${c2}"/><path d="M68,80 Q66,100 70,122" stroke="${shade(c2,-.25)}" stroke-width="1.5" fill="none"/><ellipse cx="74" cy="76" rx="12" ry="4" fill="${shade(c2,-.1)}"/><rect x="72" y="66" width="4" height="10" rx="2" fill="#4c6b2a"/>`;
+    for(const[x,y,r]of[[166,104,24],[122,112,27]]){o+=`<ellipse cx="${x+2}" cy="${y+2}" rx="${r}" ry="${r*.86}" fill="${shade(c,-.3)}"/><ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r*.86}" fill="${c}"/><ellipse cx="${x-r*.35}" cy="${y-r*.3}" rx="${r*.3}" ry="${r*.18}" fill="#fff" opacity=".35"/><ellipse cx="${x}" cy="${y-r*.7}" rx="${r*.5}" ry="${r*.16}" fill="${shade(c,-.15)}"/><path d="M${x-4},${y-r*.75} l4,-6 l4,6" stroke="#4c6b2a" stroke-width="2.4" fill="none"/>`;
+      for(let k=0;k<4;k++)o+=`<circle cx="${f1(x-r*.6+rand()*r*1.2)}" cy="${f1(y-r*.5+rand()*r)}" r="${f1(1.5+rand()*2)}" fill="#3a1a0c" opacity=".35"/>`}}
+  else if(a.v==='aubergine'){const one=(cx,cy,s)=>{const P=(dx,dy)=>f1(cx+dx*s)+','+f1(cy+dy*s);return`<path d="M${P(-58,0)} Q${P(-62,20)} ${P(-30,22)} L${P(40,20)} Q${P(62,14)} ${P(58,0)} Z" fill="${c}"/><path d="M${P(-58,0)} Q${P(-62,20)} ${P(-30,22)} L${P(40,20)}" stroke="#fff" stroke-opacity=".18" stroke-width="2" fill="none"/><ellipse cx="${f1(cx)}" cy="${f1(cy)}" rx="${f1(54*s)}" ry="${f1(9*s)}" fill="${a.f}"/>${scatterE(cx,cy,48*s,6*s,[['blob',shade(a.f,-.2),10,.7*s],['leaf','#4b8a2f',4,s]],rand)}<circle cx="${f1(cx-10*s)}" cy="${f1(cy-3*s)}" r="${f1(9*s)}" fill="#d8402a"/><circle cx="${f1(cx-10*s)}" cy="${f1(cy-3*s)}" r="${f1(6*s)}" fill="#ee6a4d"/><rect x="${f1(cx+12*s)}" y="${f1(cy-6*s)}" width="${f1(22*s)}" height="${f1(6*s)}" rx="${f1(3*s)}" fill="#5c9a33"/><path d="M${P(56,-2)} q10,-4 14,-12" stroke="#4c6b2a" stroke-width="${f1(5*s)}" stroke-linecap="round" fill="none"/>`};
+    o+=one(114,88,.9)+one(126,114,1)}
+  else{o+=`<ellipse cx="120" cy="120" rx="88" ry="18" fill="${a.sauce}"/>`;
+    for(const[x,y]of[[88,102],[136,100],[102,120],[150,120]]){o+=`<rect x="${x-24}" y="${y-11}" width="48" height="24" rx="12" fill="${shade(c,-.25)}"/><rect x="${x-24}" y="${y-13}" width="48" height="24" rx="12" fill="${c}"/><ellipse cx="${x+18}" cy="${y-1}" rx="6" ry="11" fill="${shade(c,-.12)}"/><path d="M${x-16},${y-10} q8,8 0,20 M${x-2},${y-12} q8,9 0,22" stroke="${shade(c,.35)}" stroke-width="1.5" fill="none"/>`}
+    o+=scatterE(120,104,70,18,[['blob',shade(a.sauce,-.1),8,.7],['leaf','#4d8a2c',6]],rand)}
+  return o}
+function dome(a,rand){const c=hexOk(a.c),s=hexOk(a.s);let o=plate+`<ellipse cx="120" cy="128" rx="62" ry="9" fill="${s}"/><path d="M80,128 L90,70 Q120,62 150,70 L160,128 Z" fill="${c}"/><path d="M120,66 Q150,66 150,70 L160,128 L128,128Z" fill="#000" opacity=".07"/><ellipse cx="120" cy="69" rx="30" ry="7" fill="${s}"/>`;
+  for(const[x,l]of[[96,26],[108,40],[132,20],[144,34]])o+=`<rect x="${x-3}" y="68" width="7" height="${l}" rx="3.5" fill="${s}"/>`;
+  for(const[x,y]of[[112,64],[126,63],[119,59]])o+=`<circle cx="${x}" cy="${y}" r="5.5" fill="${shade(s,-.2)}"/><circle cx="${x-1.5}" cy="${y-1.5}" r="1.5" fill="#fff" opacity=".6"/>`;
+  return o+piece('leaf','#3f7a2a',132,58,1.2,rand)}
+function toast(a,rand){let o=plate;for(const[x,y]of[[78,104],[164,106],[121,116]]){o+=`<ellipse cx="${x}" cy="${y+6}" rx="34" ry="16" fill="${a.crust}"/><ellipse cx="${x}" cy="${y}" rx="34" ry="16" fill="${a.bread}"/><ellipse cx="${x}" cy="${y}" rx="34" ry="16" fill="none" stroke="${shade(a.crust,.1)}" stroke-width="3"/>`+scatterE(x,y-1,26,11,a.pc,rand)}return o}
+function pastry(a){const c=hexOk(a.c);
+  if(a.closed){const one=(cx,cy,s)=>`<ellipse cx="${cx}" cy="${f1(cy+6*s)}" rx="${f1(56*s)}" ry="${f1(28*s)}" fill="${shade(c,-.3)}"/><ellipse cx="${cx}" cy="${cy}" rx="${f1(55*s)}" ry="${f1(27*s)}" fill="${c}"/><ellipse cx="${f1(cx-14*s)}" cy="${f1(cy-10*s)}" rx="${f1(24*s)}" ry="${f1(7*s)}" fill="${shade(c,.35)}" opacity=".7"/>`;return plate+one(84,96,.72)+one(156,96,.72)+one(120,112,.85)}
+  const one=(cx,cy,s)=>`<ellipse cx="${cx}" cy="${f1(cy+6*s)}" rx="${f1(62*s)}" ry="${f1(38*s)}" fill="${shade(c,-.25)}"/><ellipse cx="${cx}" cy="${f1(cy+8*s)}" rx="${f1(53*s)}" ry="${f1(29*s)}" fill="${a.f}"/><ellipse cx="${cx}" cy="${f1(cy-7*s)}" rx="${f1(62*s)}" ry="${f1(30*s)}" fill="${c}"/><ellipse cx="${f1(cx-16*s)}" cy="${f1(cy-16*s)}" rx="${f1(26*s)}" ry="${f1(8*s)}" fill="${shade(c,.35)}" opacity=".65"/>`;
+  return plate+one(90,92,.7)+one(146,104,.82)}
+function stack(a,rand){const c=hexOk(a.c),n=a.thin?7:3,h=a.thin?6:18,g=h+2;let o=plate;
+  for(let i=0;i<n;i++){const y=128-i*g;o+=`<ellipse cx="120" cy="${y}" rx="${a.thin?62:52}" ry="13" fill="${shade(c,-.3)}"/><rect x="${a.thin?58:68}" y="${y-h}" width="${a.thin?124:104}" height="${h}" fill="${shade(c,-.18)}"/><ellipse cx="120" cy="${y-h}" rx="${a.thin?62:52}" ry="13" fill="${c}"/><ellipse cx="106" cy="${y-h-3}" rx="22" ry="4" fill="${shade(c,.3)}" opacity=".6"/>`}
+  const t=128-(n-1)*g-h;
+  if(a.v==='caviar'){o+=`<ellipse cx="114" cy="${t}" rx="24" ry="8" fill="#fbf7ef"/><ellipse cx="111" cy="${t-4}" rx="12" ry="5" fill="#fffdf8"/>`;for(let i=0;i<22;i++)o+=`<circle cx="${f1(124+rand()*22)}" cy="${f1(t-6+rand()*9)}" r="1.8" fill="#d6461f"/>`;o+=piece('leaf','#4d8a2c',100,t-2,1,rand)}
+  else if(a.v==='cream')o+=`<ellipse cx="120" cy="${t+1}" rx="24" ry="9" fill="#fbf7ef"/><ellipse cx="117" cy="${t-4}" rx="13" ry="6" fill="#fffdf8"/>`+piece('leaf','#4d8a2c',134,t-1,1,rand);
+  else o+=`<path d="M126,${t-2} q16,-5 20,4 l0,26 q-3,6 -6,0 l0,-14 q-5,5 -11,-1 Z" fill="#b3172f"/><ellipse cx="116" cy="${t+2}" rx="24" ry="9" fill="#fbf7ef"/><ellipse cx="113" cy="${t-4}" rx="13" ry="6" fill="#fffdf8"/>`;
+  return o}
+function loaf(a){const c=hexOk(a.c);return plate+`<path d="M40,130 L44,80 Q48,58 76,56 L164,56 Q192,58 196,80 L200,130 Z" fill="${shade(c,-.08)}"/><path d="M44,80 Q48,58 76,56 L164,56 Q192,58 196,80 Q120,70 44,80 Z" fill="${shade(c,-.32)}"/><path d="M72,63 Q120,55 168,63" stroke="${shade(c,.35)}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M44,112 L200,112 L200,130 L40,130Z" fill="#000" opacity=".1"/><ellipse cx="96" cy="62" rx="9" ry="3.5" fill="#f3e2b0"/><ellipse cx="140" cy="61" rx="9" ry="3.5" fill="#f3e2b0"/>`}
+const DRAW={slice,cookie,tray,bowl,heap,pan,flat,dumpl,skewer,veg,dome,toast,pastry,stack,loaf};
+const artCache={};
+function art(r,big){const k=r.id+(big?'!':'');if(!r.mine&&artCache[k])return artCache[k];const a=r.art||LOOKS.cake.art,f=DRAW[a.t]||slice;let body='';try{body=f(a,rng(r.id))}catch(e){body=''}
+  const back=big?'<circle cx="122" cy="76" r="70" fill="#fff" opacity=".28"/>':'';return artCache[k]=`<svg viewBox="0 0 240 150" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${back}<g class="dish">${body}</g></svg>`}
+/* ---------- formatting ---------- */
+const fmtT=m=>{m=+m||0;if(m<60)return m+' min';const h=Math.floor(m/60),r=m%60;return h+' h'+(r?' '+r+' min':'')};
+const sing=u=>u.endsWith('ies')?u.slice(0,-3)+'y':u.replace(/s$/,'');
+function fmtQ(q,u){if(!q)return['',u];if(u==='l'&&q<1){q*=1000;u='ml'}if(u==='kg'&&q<1){q*=1000;u='g'}
+  if(u==='g'||u==='ml')return[String(q>=20?Math.round(q/5)*5:Math.max(1,Math.round(q))),u];
+  if(u==='l'||u==='kg')return[String(Math.round(q*100)/100),u];
+  const w=Math.floor(q+1e-9),f=q-w,F=[[0,''],[.25,'¼'],[1/3,'⅓'],[.5,'½'],[2/3,'⅔'],[.75,'¾'],[1,'']];let b=F[0];for(const x of F)if(Math.abs(x[0]-f)<Math.abs(b[0]-f))b=x;
+  const W=w+(b[0]===1?1:0);return[((W?W:'')+b[1])||'¼',u]}
+function line(i,k){const[t,u]=fmtQ(i[0]*k,i[1]);return{q:(t+(u?' '+u:'')).trim(),n:i[2]}}
+/* ---------- substitutions: [pattern, A => options]; A(mult, unit) gives the scaled amount ---------- */
+const SUBS=[
+[/optional/,A=>['It’s optional. Leave it out and carry on.']],
+[/dried lime|limoo/,A=>['The zest and juice of 1 lemon for every 2 dried limes, added for the last 20 minutes.']],
+[/kashk/,A=>[`${A(1)} thick Greek yogurt or sour cream with a pinch of salt. Stir it in off the heat so it doesn’t split.`]],
+[/barberr/,A=>[`${A(1)} dried cranberries or sour cherries, chopped, with a squeeze of lemon.`]],
+[/pomegranate molasses/,A=>[`${A(2)} pomegranate juice boiled down by half.`,`${A(.5)} balsamic vinegar plus ${A(.5)} honey.`]],
+[/saffron/,A=>['A pinch of turmeric for the colour. The flavour won’t be the same, so add a little extra butter.']],
+[/fenugreek/,A=>['Leave it out, or add a few chopped celery leaves.']],
+[/rose water/,A=>[`${A(1)} orange blossom water, or leave it out.`]],
+[/rose petals/,A=>['Leave them out; they are mostly for looks and scent.']],
+[/reshteh/,A=>[`${A(1)} linguine or other flat noodles.`]],
+[/bulgur/,A=>[`${A(1)} couscous, soaked the same way. Softer.`]],
+[/yufka|filo/,A=>['Filo for yufka or the other way round: use about 3 filo sheets for each yufka round.','Spring roll wrappers, for small rolled böreks.']],
+[/vine leaves/,A=>['Blanched chard or young cabbage leaves.']],
+[/sage/,A=>['A third as much dried sage, rubbed between your fingers.']],
+[/prosciutto/,A=>['Thinly sliced ham or speck.']],
+[/veal/,A=>['Chicken or turkey escalopes, pounded thin.']],
+[/lamb shoulder|lamb or beef shoulder/,A=>[`${A(1)} beef chuck or shin. Braise it 30 minutes longer.`]],
+[/kidney beans|chickpeas|lentils/,A=>['Any tinned beans or lentils, added for the last 20 minutes.']],
+[/breadcrumbs/,A=>['Panko or crushed crackers.']],
+[/kaşar|cheddar/,A=>['Any mild melting cheese, such as gouda, emmental or mozzarella.']],
+[/\blime/,A=>[`${A(1)} lemon juice.`]],
+[/bicarbonate|baking soda/,A=>[`${A(3)} baking powder instead. Bakes rise and brown a little less, and cookies spread a little less.`,'Leave it out. Cookies come out puffier and more cake-like, still good.']],
+[/baking powder/,A=>[`${A(.25)} bicarbonate of soda plus ${A(.5)} cream of tartar or lemon juice.`,'Self-raising flour in place of the plain flour, and leave the baking powder out.']],
+[/caster sugar/,A=>[`${A(1)} ordinary granulated sugar. Cream or whisk a minute longer so it dissolves.`,`Blitz ${A(1)} granulated sugar in a blender for 30 seconds to make your own caster sugar.`]],
+[/icing sugar/,A=>[`Blitz ${A(1)} granulated sugar with a teaspoon of cornflour until powdery.`]],
+[/brown sugar/,A=>[`${A(1)} white sugar plus 1 tbsp honey or molasses per 100 g. Close in taste and chew.`,`${A(1)} white sugar alone. A little crisper and paler.`]],
+[/\bsugar\b/,A=>[`${A(1)} caster or light brown sugar. Brown sugar adds a light caramel note.`]],
+[/double cream|whipping cream|heavy cream/,A=>[`${A(1)} whipping cream (30–35% fat). Same result.`,`For sauces and ganache: ${A(.75)} whole milk plus ${A(.25,'g')} melted butter. It won’t whip.`,`${A(1)} full-fat crème fraîche. Fine in sauces, not for whipping.`]],
+[/sour cream|smetana/,A=>[`${A(1)} thick Greek yogurt. Stir it in off the heat so it doesn’t split.`,`${A(1)} crème fraîche.`]],
+[/greek yogurt/,A=>[`Strain ${A(2)} plain yogurt in a cloth for 2 hours.`,`${A(1)} labneh or sour cream.`]],
+[/yogurt/,A=>[`${A(1)} sour cream or kefir.`]],
+[/mascarpone/,A=>[`${A(.67)} full-fat cream cheese beaten smooth with ${A(.33,'ml')} double cream.`]],
+[/cream cheese/,A=>[`${A(1)} mascarpone. A little softer, so chill longer.`,`${A(1)} labneh. Tangier and lighter.`]],
+[/tvorog|farmer/,A=>[`${A(1)} ricotta, drained in a sieve for an hour.`,`${A(1)} cottage cheese, drained and blended smooth.`]],
+[/feta/,A=>[`${A(1)} beyaz peynir or any brined white cheese.`]],
+[/pecorino|parmigiano|parmesan|kefalotyri/,A=>[`${A(1)} grana padano or parmesan. Milder than pecorino, so add a pinch of salt.`]],
+[/mozzarella/,A=>[`${A(1)} low-moisture mozzarella, torn. It melts less wet.`]],
+[/guanciale|pancetta/,A=>[`${A(1)} pancetta or thick smoked bacon. Smokier, still very good.`]],
+[/egg yolk/,A=>['No real stand-in where yolks set the dish. For a glaze, brush with milk instead.']],
+[/\beggs?\b/,A=>[`In cakes and batters: ${A(60,'g')} plain yogurt.`,`To bind: ${A(1,'tbsp')} ground flaxseed mixed with ${A(3,'tbsp')} water, rested 5 minutes.`]],
+[/butter/,A=>[`${A(1)} baking margarine or block plant butter.`,`In cakes and batters: ${A(.8)} neutral oil.`]],
+[/milk/,A=>[`${A(1)} oat, soy or other plant milk.`,`${A(.5)} water plus ${A(.5)} single cream or yogurt.`]],
+[/tipo 00/,A=>[`${A(1)} strong white bread flour, with about 10 ml less water.`]],
+[/strong white flour/,A=>[`${A(1)} plain flour. The dough is softer, so hold back a splash of water.`]],
+[/rice flour|cornflour/,A=>[`${A(2)} plain flour. Cook it 2 minutes longer.`,`${A(1)} potato starch.`]],
+[/flour/,A=>[`${A(1)} gluten-free plain flour blend, plus ¼ tsp xanthan gum per 150 g.`,`${A(1)} spelt flour, for a nuttier taste.`]],
+[/semolina/,A=>[`${A(1)} fine polenta, or plain flour for a softer crumb.`]],
+[/cocoa/,A=>[`${A(1)} natural cocoa instead of Dutch-process, or the other way round. With natural cocoa, swap any soda for 3× the baking powder.`,'Melted dark chocolate: 30 g for every 3 tbsp cocoa, with 1 tbsp less butter.']],
+[/white chocolate/,A=>[`${A(1)} milk chocolate. A different, still lovely, result.`]],
+[/chocolate/,A=>[`${A(1)} milk chocolate. Sweeter, so cut the sugar a little.`,`If it gets melted: ${A(.6)} cocoa powder plus ${A(.4)} butter. Not for chunks.`]],
+[/vanilla/,A=>['A sachet of vanilla sugar or a little orange zest, or just leave it out.']],
+[/honey/,A=>[`${A(1)} golden syrup or maple syrup.`]],
+[/lemon juice/,A=>[`${A(.5)} white wine or apple cider vinegar.`]],
+[/lemon/,A=>['A lime, or a splash of white wine vinegar for the sourness.']],
+[/yeast/,A=>[`${A(1)} active dry yeast, dissolved in the warm liquid for 10 minutes first.`,`${A(3)} fresh yeast, crumbled into the liquid.`]],
+[/gelatine/,A=>['½ tsp agar powder per 3 leaves, boiled in the milk for 2 minutes. It sets firmer.']],
+[/marsala|amaretto/,A=>['Leave it out and use a little more coffee.']],
+[/white wine/,A=>[`${A(1)} stock plus a teaspoon of white wine vinegar.`]],
+[/red wine/,A=>[`${A(1)} stock plus a teaspoon of balsamic vinegar.`]],
+[/espresso/,A=>[`${A(1)} strong instant coffee, about 2 tbsp granules per 300 ml.`]],
+[/savoiardi/,A=>['Plain sponge cake cut into fingers and dried for 10 minutes in a low oven.']],
+[/pine nut/,A=>[`${A(1)} walnuts or blanched almonds.`]],
+[/walnut/,A=>[`${A(1)} hazelnuts, pistachios or almonds.`]],
+[/pistachio/,A=>[`${A(1)} walnuts or almonds.`]],
+[/coconut/,A=>[`${A(1)} ground almonds.`]],
+[/pul biber|aleppo/,A=>[`${A(1)} sweet paprika plus a pinch of chilli flakes.`]],
+[/sumac/,A=>['Grated lemon zest and a squeeze of lemon.']],
+[/pepper paste|biber/,A=>[`${A(1)} tomato paste plus ½ tsp paprika.`]],
+[/tomato paste/,A=>[`${A(3)} passata, cooked down longer.`]],
+[/dried mint/,A=>[`${A(3)} chopped fresh mint.`]],
+[/oregano/,A=>[`${A(1)} dried thyme or marjoram.`]],
+[/\bdill\b/,A=>['Fennel fronds or parsley.']],
+[/parsley/,A=>['Coriander or a little dill.']],
+[/basil/,A=>['Half basil, half baby spinach or rocket.']],
+[/mince/,A=>[`${A(1)} of any mince you have: beef, lamb, pork or turkey.`]],
+[/fillet|sirloin/,A=>[`${A(1)} rump steak or chicken thighs, in strips.`]],
+[/pork shoulder|neck/,A=>[`${A(1)} boneless chicken thighs.`]],
+[/stock/,A=>[`${A(1)} water with a stock cube per 500 ml.`]],
+[/cooked chicken|sausage/,A=>[`${A(1)} ham or cooked turkey.`]],
+[/chicken/,A=>['The same weight of bone-in chicken thighs and drumsticks.']],
+[/rice/,A=>[`${A(1)} of another medium-grain rice. For pilav even basmati works, with 10% less water.`]],
+[/mayonnaise/,A=>[`${A(.5)} Greek yogurt plus ${A(.5)} mayonnaise, or all sour cream.`]],
+[/pickle/,A=>[`${A(1)} cornichons.`]],
+[/sauerkraut/,A=>['Extra pickles and a splash of their brine.']],
+[/\boil\b/,A=>[`${A(1)} of any oil you have. Use a mild one for frying and baking.`]],
+[/black pepper/,A=>['White pepper, or leave it out.']],
+[/cumin/,A=>[`${A(1)} ground coriander or a little smoked paprika.`]],
+[/peppers?\b/,A=>['Any sweet pepper: bell, sivri or Romano.']],
+[/passata|tinned|chopped tomatoes/,A=>[`${A(1.2)} fresh ripe tomatoes, grated.`]],
+[/digestive/,A=>[`${A(1)} graham crackers, Petit Beurre or any plain biscuit.`]],
+[/garlic/,A=>['⅛ tsp garlic powder per clove.']],
+[/spring onion/,A=>['Chives, or a little finely chopped red onion.']],
+[/onion/,A=>[`${A(1)} shallots or a leek.`]],
+[/to serve|to finish|for dusting|to garnish|for brushing/,A=>['It’s a finishing touch. Skip it or use what you have.']]];
+function subsFor(r,i,k){const name=i[2].toLowerCase(),q=i[0]*k,u=i[1];
+  const A=(m,u2)=>{if(!q)return m===1?'the same amount of':'some';const[t,uu]=fmtQ(q*m,u2===undefined?u:u2);return(t+(uu?' '+uu:'')).trim()};
+  let out=[];const own=r.subs||{};for(const key in own)if(name.includes(key.toLowerCase()))out=out.concat(own[key]);
+  const hit=SUBS.find(s=>s[0].test(name));if(hit)out=out.concat(hit[1](A));
+  return out.map(t=>t[0].toUpperCase()+t.slice(1))}
+/* ---------- filters and list ---------- */
+const sortR=(a,b)=>(CO[a.course]-CO[b.course])||((CUIS.indexOf(a.origin)+1||9)-(CUIS.indexOf(b.origin)+1||9))||a.name.localeCompare(b.name);
+function vis(){const q=st.q.trim().toLowerCase();return all().filter(r=>(st.cui==='all'||(st.cui==='saved'?fav.has(r.id):st.cui==='mine'?r.mine:r.origin===st.cui))&&(!st.course||r.course===st.course)&&(!q||[r.name,r.local,r.origin,CL[r.course]].concat(r.ing.map(i=>typeof i==='string'?i:i[2])).join(' ').toLowerCase().includes(q))).sort(sortR)}
+function renderChips(){const n={};all().forEach(r=>n[r.origin]=(n[r.origin]||0)+1);
+  const orgs=Object.keys(n).sort((a,b)=>((CUIS.indexOf(a)+1||9)-(CUIS.indexOf(b)+1||9))||n[b]-n[a]);
+  if(!['all','saved','mine'].includes(st.cui)&&!n[st.cui])st.cui='all';
+  const chip=(k,l,c)=>`<button class="chip" type="button" data-cui="${esc(k)}" aria-pressed="${st.cui===k}">${esc(l)}${c?`<span>${c}</span>`:''}</button>`;
+  $('#chips').innerHTML=chip('all','All',all().length)+orgs.map(o=>chip(o,o,n[o])).join('')+chip('saved','Saved',fav.size)+(mine.length?chip('mine','Mine',mine.length):'')+
+  `<label class="sr" for="course">Course</label><select id="course"><option value="">Every course</option>${COURSES.map(c=>`<option value="${c[0]}"${c[0]===st.course?' selected':''}>${esc(c[1])}</option>`).join('')}</select>`}
+function renderItems(){const v=vis(),n=all().length;
+  $('#count').textContent=v.length===n?n+' recipes':v.length+' of '+n+' recipes';
+  if(!v.length){$('#items').innerHTML=`<div class="empty">Nothing matches that. Try another word or show everything.<br><button type="button" id="clear">Clear search and filters</button></div>`;return}
+  let h='',last='';for(const r of v){if(r.course!==last){last=r.course;h+=`<p class="gh">${esc(CL[r.course])} <span>${v.filter(x=>x.course===last).length}</span></p>`}
+    h+=`<a class="item" href="#${esc(r.id)}" style="--tint:${hexOk(r.tint)}" aria-current="${r.id===cur}"><span class="pic">${art(r)}</span><span><b>${esc(r.name)}${fav.has(r.id)?' <span class="heart" aria-label="saved">♥</span>':''}</b><small>${esc(r.origin)} · ${fmtT(r.time)}</small></span></a>`}
+  $('#items').innerHTML=h}
+/* ---------- detail ---------- */
+const heartSvg=on=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-9.2-9A5 5 0 0 1 12 6a5 5 0 0 1 9.2 5C19 15.6 12 20 12 20z" fill="${on?'currentColor':'none'}" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`;
+const scaleNote=(r,n)=>n!==r.serves?'Scaled from '+r.serves+'. Tin and pan sizes stay the same; adjust by eye.':'Tap − and + to scale every amount. Missing something? Tap Swap for what to use instead.';
+const missOf=r=>st.miss[r.id]||(st.miss[r.id]={});
+function ingHtml(r){const n=st.sv[r.id]||r.serves,k=n/r.serves,M=missOf(r);
+  return r.ing.map((i,x)=>{if(typeof i==='string')return`<li class="grp">${esc(i.replace(/^#\s*/,''))}</li>`;
+    const l=line(i,k),m=M[x],opts=subsFor(r,i,k).concat(['Leave it out.']),was=(l.q?l.q+' ':'')+l.n;
+    if(m===undefined)return`<li><div class="row"><label><input type="checkbox" id="i-${x}"><span class="q">${esc(l.q)}</span><span>${esc(l.n)}</span></label><button type="button" class="sw" data-act="swap" data-i="${x}" aria-label="I don’t have ${esc(l.n)}">Swap</button></div></li>`;
+    if(m>=0&&opts[m])return`<li class="swapped"><div class="row"><label><input type="checkbox" id="i-${x}"><span class="q">↻</span><span>${esc(opts[m])}<small class="was">instead of ${esc(was)}</small></span></label><button type="button" class="sw" data-act="swap" data-i="${x}">Change</button></div></li>`;
+    return`<li class="missing"><div class="row"><label><input type="checkbox" id="i-${x}" disabled><span class="q">${esc(l.q)}</span><span>${esc(l.n)}</span></label><button type="button" class="sw" data-act="unswap" data-i="${x}">I have it</button></div>
+      <div class="subs"><p>${opts.length>1?'Don’t have it? Pick what you’ll use instead:':'There’s no good stand-in for this one. If it’s central to the dish it’s worth getting; otherwise:'}</p>${opts.map((t,o)=>`<button type="button" class="opt" data-act="pick" data-i="${x}" data-o="${o}">${esc(t)}</button>`).join('')}</div></li>`}).join('')}
+function renderDetail(){const r=find(cur),d=$('#detail');if(!r){d.innerHTML='';return}
+  const n=st.sv[r.id]||r.serves,on=fav.has(r.id);
+  d.innerHTML=`<button class="back" type="button" data-act="back">← All recipes</button>
+  <div class="hero" style="--tint:${hexOk(r.tint)}">${art(r,true)}</div>
+  <div class="head"><div><h2>${esc(r.name)}</h2><p class="local">${esc(r.local?r.local+' · ':'')}${esc(r.origin)} · ${esc(CL[r.course]||'')}</p></div>
+  <div class="acts"><button class="ghost" type="button" data-act="fav" aria-pressed="${on}">${heartSvg(on)}${on?'Saved':'Save'}</button><button class="ghost" type="button" data-act="copy">Copy shopping list</button>${r.mine?'<button class="ghost" type="button" data-act="edit">Edit</button><button class="ghost" type="button" data-act="del">Delete</button>':''}</div></div>
+  <dl class="facts"><div><dt>Total time</dt><dd>${fmtT(r.time)}</dd></div><div><dt>Hands-on</dt><dd>${fmtT(r.active)}</dd></div><div><dt>Level</dt><dd>${esc(r.level||'—')}</dd></div><div><dt>Recipe makes</dt><dd>${r.serves} ${esc(r.unit)}</dd></div></dl>
+  <div class="cols"><section class="ing" aria-label="Ingredients"><div class="ih"><h3>Ingredients</h3><div class="scale"><button type="button" data-act="minus" aria-label="Fewer">−</button><output id="sv" aria-live="polite">${n} ${esc(n===1?sing(r.unit):r.unit)}</output><button type="button" data-act="plus" aria-label="More">+</button></div></div>
+  <ul class="ings" id="ings">${ingHtml(r)}</ul><p class="hint" id="cp">${scaleNote(r,n)}</p></section>
+  <section aria-label="Method"><h3>Method</h3><ol class="steps">${r.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>${r.tip?`<p class="tip"><b>Tip.</b> ${esc(r.tip)}</p>`:''}</section></div>`}
+function scale(r,dir){const n=Math.max(1,Math.min(500,(st.sv[r.id]||r.serves)+dir));st.sv[r.id]=n;$('#ings').innerHTML=ingHtml(r);$('#sv').textContent=n+' '+(n===1?sing(r.unit):r.unit);$('#cp').textContent=scaleNote(r,n)}
+/* ---------- routing ---------- */
+function route(scroll){const id=decodeURIComponent(location.hash.slice(1)),r=id&&find(id);
+  if(r){cur=r.id;document.body.classList.add('open')}else{document.body.classList.remove('open');if(!cur||!find(cur))cur=(vis()[0]||all().slice().sort(sortR)[0]||{}).id}
+  renderItems();renderDetail();
+  if(scroll&&innerWidth<900)window.scrollTo({top:r?$('#main').offsetTop:0})}
+/* ---------- events ---------- */
+$('#q').addEventListener('input',e=>{st.q=e.target.value;renderItems()});
+$('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-cui]');if(!b)return;st.cui=b.dataset.cui;renderChips();renderItems()});
+$('#chips').addEventListener('change',e=>{if(e.target.id==='course'){st.course=e.target.value;renderItems()}});
+$('#items').addEventListener('click',e=>{if(e.target.id==='clear'){st.q='';st.cui='all';st.course='';$('#q').value='';renderChips();renderItems()}});
+$('#detail').addEventListener('click',async e=>{const r=find(cur);if(!r)return;const li=e.target.closest('.steps li');if(li){li.classList.toggle('done');return}
+  const b=e.target.closest('[data-act]');if(!b)return;const act=b.dataset.act;
+  if(act==='back'){clearHash();route(true)}
+  else if(act==='minus'||act==='plus')scale(r,act==='plus'?1:-1);
+  else if(act==='swap'||act==='unswap'||act==='pick'){const M=missOf(r),x=+b.dataset.i;if(act==='swap')M[x]=-1;else if(act==='unswap')delete M[x];else M[x]=+b.dataset.o;
+    $('#ings').innerHTML=ingHtml(r);const f=$('#ings').querySelector('[data-i="'+x+'"]');if(f)f.focus()}
+  else if(act==='fav'){fav.has(r.id)?fav.delete(r.id):fav.add(r.id);LS.set('sofra-fav',[...fav]);renderChips();renderItems();renderDetail()}
+  else if(act==='copy'){const k=(st.sv[r.id]||r.serves)/r.serves,M=missOf(r),txt=r.name+'\n'+r.ing.map((i,x)=>{if(typeof i==='string')return'\n'+i.replace(/^#\s*/,'');const l=line(i,k),w=(l.q?l.q+' ':'')+l.n,m=M[x];
+      if(m===undefined)return'- '+w;const o=subsFor(r,i,k).concat(['Leave it out.'])[m];return o?'- '+o+' (instead of '+w+')':'- '+w+' (missing)'}).join('\n');
+    try{await navigator.clipboard.writeText(txt);b.textContent='Copied'}catch(err){b.textContent='Copy blocked here'}setTimeout(()=>{b.textContent='Copy shopping list'},1800)}
+  else if(act==='edit')openForm(r);
+  else if(act==='del'){if(!b.dataset.arm){b.dataset.arm='1';b.textContent='Tap again to delete';setTimeout(()=>{if(b.isConnected){delete b.dataset.arm;b.textContent='Delete'}},3000);return}
+    mine=mine.filter(x=>x.id!==r.id);fav.delete(r.id);LS.set('sofra-mine',mine);LS.set('sofra-fav',[...fav]);cur=null;clearHash();renderChips();route(true)}});
+window.addEventListener('hashchange',()=>route(true));
+/* ---------- add / edit form ---------- */
+const dlg=$('#dlg'),F=id=>$('#f-'+id);
+function toText(r){return r.ing.map(i=>typeof i==='string'?i:[i[0]||'',i[1],i[2]].filter(Boolean).join(' ')).join('\n')}
+function openForm(r){editing=r?r.id:null;$('#fmTitle').textContent=r?'Edit recipe':'Add a recipe';
+  F('name').value=r?r.name:'';F('local').value=r?r.local||'':'';F('origin').value=r?r.origin:'';F('course').value=r?r.course:'mains';F('look').value=r&&LOOKS[r.look]?r.look:'plate';F('serves').value=r?r.serves:4;F('unit').value=r?r.unit:'servings';F('time').value=r?r.time:60;F('active').value=r?r.active:20;F('ing').value=r?toText(r):'';F('steps').value=r?r.steps.join('\n'):'';F('tip').value=r?r.tip||'':'';
+  if(dlg.showModal)dlg.showModal();else dlg.setAttribute('open','')}
+const FR={'½':.5,'¼':.25,'¾':.75,'⅓':1/3,'⅔':2/3};
+function parseIng(t){t=t.trim();if(!t)return null;if(t[0]==='#')return t;
+  const m=t.match(/^(\d+(?:[.,]\d+)?(?:\s*[½¼¾⅓⅔])?|\d+\/\d+|[½¼¾⅓⅔])\s*(g|kg|ml|l|tbsp|tsp)?\.?\s+(.+)$/i);if(!m)return[0,'',t];
+  let s=m[1].replace(',','.'),q=0;if(s.includes('/')){const[a,b]=s.split('/');q=a/b}else{const fr=s.match(/[½¼¾⅓⅔]/);q=(parseFloat(s)||0)+(fr?FR[fr[0]]:0)}
+  return[q,(m[2]||'').toLowerCase(),m[3]]}
+const closeDlg=()=>dlg.close?dlg.close():dlg.removeAttribute('open');
+$('#add').addEventListener('click',()=>openForm(null));
+$('#cancel').addEventListener('click',closeDlg);
+$('#fm').addEventListener('submit',e=>{e.preventDefault();const name=F('name').value.trim();if(!name)return;
+  const look=F('look').value,L=LOOKS[look]||LOOKS.cake;
+  let id=editing;if(!id){const base='my-'+(name.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'recipe');id=base;let i=2;while(find(id))id=base+'-'+i++}
+  const r={id,mine:true,name,local:F('local').value.trim(),origin:F('origin').value.trim()||'My kitchen',course:CL[F('course').value]?F('course').value:'mains',look,time:Math.max(1,+F('time').value||60),active:Math.max(1,+F('active').value||20),serves:Math.max(1,Math.round(+F('serves').value)||4),unit:F('unit').value.trim()||'servings',level:'Home recipe',tint:L.tint,art:L.art,
+    ing:F('ing').value.split('\n').map(parseIng).filter(Boolean),steps:F('steps').value.split('\n').map(s=>s.trim()).filter(Boolean),tip:F('tip').value.trim()};
+  const k=mine.findIndex(x=>x.id===id);if(k>=0)mine[k]=r;else mine.push(r);LS.set('sofra-mine',mine);delete st.sv[id];
+  closeDlg();renderChips();
+  if(location.hash==='#'+id)route(true);else location.hash=id});
+renderChips();route(false);
+}
+</script>
+<script>
+// Offline support when installed on a phone; silently skipped where service workers aren't allowed.
+try{if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(e){}
+</script>
+</body>
+</html>
