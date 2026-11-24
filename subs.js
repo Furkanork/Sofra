@@ -1,6 +1,12 @@
 /* Ingredient substitutions: [pattern on the English ingredient name, A => options]. A(mult, unit) gives the scaled amount. */
 window.SOFRA_SUBS=(function(){return [
 [/optional/,A=>['It’s optional. Leave it out and carry on.']],
+[/condensed milk/,A=>[`Simmer ${A(2,'ml')} whole milk with ${A(.7)} sugar, stirring, until reduced to ${A(1,'ml')} and syrupy. Cool before using.`]],
+[/orange blossom/,A=>[`${A(1)} rose water, or a little orange zest.`]],
+[/kadayıf|kadaif/,A=>['Very finely shredded filo: roll up the sheets and slice them as thin as you can.']],
+[/künefe cheese/,A=>[`${A(.5)} fresh mozzarella plus ${A(.5)} unsalted ricotta or lor, well drained.`]],
+[/cardamom/,A=>['A pinch of cinnamon, or leave it out.']],
+[/hulled wheat/,A=>[`${A(1)} pearl barley. Cook it about 40 minutes.`]],
 [/dried lime|limoo/,A=>['The zest and juice of 1 lemon for every 2 dried limes, added for the last 20 minutes.']],
 [/kashk/,A=>[`${A(1)} thick Greek yogurt or sour cream with a pinch of salt. Stir it in off the heat so it doesn’t split.`]],
 [/barberr/,A=>[`${A(1)} dried cranberries or sour cherries, chopped, with a squeeze of lemon.`]],
