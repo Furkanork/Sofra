@@ -75,7 +75,7 @@ Add an entry to `recipes.js`:
 
 To translate a recipe, add an entry to `recipes-tr.js` with `name`, `local`, and `ing` and `steps` arrays of the same length and order as the English (headings included).
 
-After changing files, bump `VERSION` in `sw.js` so installed copies pick up the update.
+After changing files, bump `VERSION` in `sw.js` and the `?v=` number on the file links in `index.html`, so installed phones pick up the update straight away.
 
 ## Run it locally
 
