@@ -50,6 +50,8 @@ Timers ring while Sofra is open on screen; phones pause web apps in the backgrou
 | `subs.js` | Ingredient swap suggestions |
 | `pantry.js` | Pantry ingredients and shop sections |
 | `draw.js` | The dish drawings |
+| `diet.js` | Diet label rules |
+| `tests/check.js` | Checks to run before publishing |
 | `manifest.webmanifest` | App name, colours and icons for installing on a phone |
 | `sw.js` | Service worker that keeps the app working offline |
 | `icons/` | Home-screen icons and favicon |
@@ -76,6 +78,18 @@ Add an entry to `recipes.js`:
 To translate a recipe, add an entry to `recipes-tr.js` with `name`, `local`, and `ing` and `steps` arrays of the same length and order as the English (headings included).
 
 After changing files, bump `VERSION` in `sw.js` and the `?v=` number on the file links in `index.html`, so installed phones pick up the update straight away.
+
+## Checking changes
+
+Before publishing, run:
+
+```
+node tests/check.js
+```
+
+It checks every recipe (fields, units, drawings), that Turkish translations line up with the English, that all interface text has Turkish, that every ingredient matches a pantry item, the swap suggestions, a set of known diet-label answers, and that the offline file list and version numbers agree. It prints what failed and exits with an error if anything does.
+
+Diet labels (vegetarian, vegan, gluten-free) are worked out from ingredient names in `diet.js`. They are a best guess, and the app says so next to every label.
 
 ## Run it locally
 

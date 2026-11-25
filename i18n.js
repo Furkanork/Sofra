@@ -27,6 +27,8 @@ tr:{
 'There’s no good stand-in for this one. If it’s central to the dish it’s worth getting; otherwise:':'Bunun iyi bir alternatifi yok. Yemeğin temel malzemesiyse almaya değer; değilse:',
 'Suggestions are in English for now.':'Öneriler şimdilik İngilizce.',
 'Vegan':'Vegan',
+'Diet labels are worked out from the ingredient names and can be wrong. With an allergy or coeliac disease, check every ingredient and packet yourself.':'Beslenme etiketleri malzeme adlarından çıkarılır ve hatalı olabilir. Alerjiniz ya da çölyakınız varsa her malzemeyi ve paketi kendiniz kontrol edin.',
+'diet labels are a best guess, so check ingredients':'beslenme etiketleri tahminidir, malzemeleri kontrol edin',
 'Vegetarian':'Vejetaryen',
 'Gluten-free':'Glutensiz',
 '30 min or less':'30 dk veya daha kısa',

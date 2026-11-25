@@ -98,19 +98,8 @@ function ingLines(r,k){const M=swapsOf(r);return r.ing.map((i,x)=>{if(typeof i==
   if(m==null)return{text:w};if(m===-1)return{text:w+' ('+t('missing')+')'};const o=optsFor(r,i,k)[m];return{text:o?o+' ('+t('instead of {x}',{x:w})+')':w,swapped:true}})}
 const linesText=ls=>ls.map(l=>l.head!=null?'\n'+l.head:'- '+l.text).join('\n');
 
-/* ---------- diets ---------- */
-const MEAT=/\b(beef|lamb|pork|chicken|veal|mince|minced|guanciale|pancetta|prosciutto|sausage|sucuk|bacon|ham|salmon|fish|anchov\w*|caviar|gelatine|meat|bones?|ribs|escalopes)\b/;
-const ANIMAL=/\b(eggs?|yolks?|butter|milk|cream|cheese|yogh?urt|kashk|honey|mascarpone|mozzarella|feta|parmigiano|parmesan|pecorino|ricotta|tvorog|kefalotyri|kaşar|cheddar|sulguni|sirene|kaymak|mayonnaise|smetana|savoiardi|ganache|ghee)\b/;
-const GLUTEN=/\b(flour|semolina|bulgur|pasta|spaghetti|linguine|trofie|tonnarelli|rigatoni|bucatini|lasagne|ditalini|orzo|şehriye|vermicelli|noodles|reshteh|bread|breadcrumbs|biscuits?|savoiardi|filo|yufka|couscous|pitta|pita|lavash|ciabatta|sourdough|digestive|barley|wheat|dough|lepinja|simit|dumpling)\b/;
-const OPT=/optional|, to serve|, to finish|, to garnish|, to decorate|^[^,]*\bto serve\b/;
-const SERVE_HEAD=/serve|garnish/i;
-// An ingredient only counts as meat/dairy/gluten-free-breaking if no " or " alternative avoids it.
-const ALT={meat:/\b(water|vegetable|veg)\b/,animal:/\b(oil|margarine|plant|vegetable|water|syrup)\b/,gluten:/\b(rice|corn|potato|gluten-free)\b/};
-const dietCache={};
-function diet(r){if(!r.mine&&dietCache[r.id])return dietCache[r.id];let veg=true,vegan=true,gf=true,serve=false;
-  for(const i of r.ing){if(typeof i==='string'){serve=SERVE_HEAD.test(i);continue}const n=i[2].toLowerCase();if(serve||OPT.test(n))continue;const m=n.replace(/rice flour|cornflour|corn flour|potato starch|gluten-free[\w\s-]*/g,''),parts=m.split(/\bor\b|\//);
-    const hits=(re,alt)=>re.test(m)&&!parts.some(p=>!re.test(p)&&alt.test(p));if(hits(MEAT,ALT.meat))veg=false;if(hits(ANIMAL,ALT.animal))vegan=false;if(hits(GLUTEN,ALT.gluten))gf=false}
-  const o=Object.assign({veg,vegan:veg&&vegan,gf,quick:r.time<=30},r.diet||{});if(!r.mine)dietCache[r.id]=o;return o}
+/* ---------- diets (rules live in diet.js) ---------- */
+const {diet,OPT}=window.SofraDiet;
 
 /* ---------- pantry matching ---------- */
 const PITEMS=(PAN.items||[]).map(p=>({k:p[0],en:p[1],tr:p[2],sec:p[3],re:new RegExp(p[4],'i')}));
@@ -141,7 +130,7 @@ function renderChips(){const n={};all().forEach(r=>n[r.origin]=(n[r.origin]||0)+
 function coverImg(r){const c=covers[r.id];return c&&coverData[r.id]?`<img src="${esc(coverData[r.id])}" alt="">`:''}
 function card(r,extra){return`<a class="item" href="#${esc(r.id)}" style="--tint:${hexOk(r.tint)}" aria-current="${r.id===cur&&st.view==='recipes'}"><span class="pic">${coverImg(r)||art(r)}</span><span><b>${esc(rName(r))}${fav.has(r.id)?' <span class="heart" aria-label="'+esc(t('Saved'))+'">♥</span>':''}</b><small>${esc(cName(r.origin))} · ${fmtT(r.time)}</small>${extra||''}</span></a>`}
 function renderItems(){const v=vis(),n=all().length;
-  $('#count').textContent=v.length===n?t('{n} recipes',{n}):t('{a} of {b} recipes',{a:v.length,b:n});
+  $('#count').textContent=(v.length===n?t('{n} recipes',{n}):t('{a} of {b} recipes',{a:v.length,b:n}))+(['veg','vegan','gf'].some(d=>st.diet.has(d))?' · '+t('diet labels are a best guess, so check ingredients'):'');
   if(!v.length){$('#items').innerHTML=`<div class="empty">${t('Nothing matches that. Try another word or show everything.')}<br><button type="button" id="clear">${t('Clear search and filters')}</button></div>`;return}
   let h='',last='';for(const r of v){if(r.course!==last){last=r.course;h+=`<p class="gh">${esc(t(CL[r.course]))} <span>${v.filter(x=>x.course===last).length}</span></p>`}h+=card(r)}
   $('#items').innerHTML=h}
@@ -156,12 +145,13 @@ function ingHtml(r){const n=st.sv[r.id]||r.serves,k=n/r.serves,M=swapsOf(r);
     if(m>=0&&opts[m])return`<li class="swapped"><div class="row"><label><input type="checkbox" id="i-${x}"><span class="q">↻</span><span>${esc(opts[m])}<small class="was">${esc(t('instead of {x}',{x:was}))}</small></span></label><button type="button" class="sw" data-act="swap" data-i="${x}">${t('Change')}</button></div></li>`;
     return`<li class="missing"><div class="row"><label><input type="checkbox" id="i-${x}" disabled><span class="q">${esc(l.q)}</span><span>${esc(l.n)}</span></label><button type="button" class="sw" data-act="unswap" data-i="${x}">${t('I have it')}</button></div>
       <div class="subs"><p>${opts.length>1?t('Don’t have it? Pick what you’ll use instead:'):t('There’s no good stand-in for this one. If it’s central to the dish it’s worth getting; otherwise:')}</p>${tr()&&opts.length>1?`<p class="hint">${t('Suggestions are in English for now.')}</p>`:''}${opts.map((o,j)=>`<button type="button" class="opt" data-act="pick" data-i="${x}" data-o="${j}">${esc(o)}</button>`).join('')}</div></li>`}).join('')}
+function hasDiet(r){const d=diet(r);return d.veg||d.vegan||d.gf}
 function tagsOf(r){const d=diet(r);return[d.vegan?t('Vegan'):d.veg?t('Vegetarian'):'',d.gf?t('Gluten-free'):'',d.quick?t('30 min or less'):''].filter(Boolean)}
 function renderDetail(){const r=find(cur),d=$('#detail');if(!r){d.innerHTML='';return}
   const n=st.sv[r.id]||r.serves,on=fav.has(r.id),inPlan=plan.some(p=>p.id===r.id),tags=tagsOf(r),cov=covers[r.id]&&coverData[r.id];
   d.innerHTML=`<button class="back" type="button" data-act="back">← ${t('All recipes')}</button>
   <div class="hero${cov?' photo':''}" style="--tint:${hexOk(r.tint)}">${cov?`<img src="${esc(cov)}" alt="${esc(t('Your photo of {x}',{x:rName(r)}))}">`:art(r,true)}</div>
-  <div class="head"><div><h2>${esc(rName(r))}</h2><p class="local">${esc(rLocal(r)?rLocal(r)+' · ':'')}${esc(cName(r.origin))} · ${esc(t(CL[r.course]||''))}</p>${tags.length?`<p class="tags">${tags.map(x=>`<span>${esc(x)}</span>`).join('')}</p>`:''}</div>
+  <div class="head"><div><h2>${esc(rName(r))}</h2><p class="local">${esc(rLocal(r)?rLocal(r)+' · ':'')}${esc(cName(r.origin))} · ${esc(t(CL[r.course]||''))}</p>${tags.length?`<p class="tags">${tags.map(x=>`<span>${esc(x)}</span>`).join('')}</p>`:''}${hasDiet(r)?`<p class="dietnote">${t('Diet labels are worked out from the ingredient names and can be wrong. With an allergy or coeliac disease, check every ingredient and packet yourself.')}</p>`:''}</div>
   <div class="acts"><button class="butter" type="button" data-act="cook">${t('Start cooking')}</button><button class="ghost" type="button" data-act="fav" aria-pressed="${on}">${heartSvg(on)}${on?t('Saved'):t('Save')}</button><button class="ghost" type="button" data-act="plan" aria-pressed="${inPlan}">${inPlan?t('In your plan'):t('Add to plan')}</button><button class="ghost" type="button" data-act="share">${t('Share')}</button><button class="ghost" type="button" data-act="copy">${t('Copy shopping list')}</button>${r.mine?`<button class="ghost" type="button" data-act="edit">${t('Edit')}</button><button class="ghost" type="button" data-act="del">${t('Delete')}</button>`:''}</div></div>
   ${tr()&&!r.mine&&!full(r)?`<p class="note">${t('This recipe isn’t translated yet, so it is shown in English.')}</p>`:''}
   <dl class="facts"><div><dt>${t('Total time')}</dt><dd>${fmtT(r.time)}</dd></div><div><dt>${t('Hands-on')}</dt><dd>${fmtT(r.active)}</dd></div><div><dt>${t('Level')}</dt><dd>${esc(t(r.level||'—'))}</dd></div><div><dt>${t('Recipe makes')}</dt><dd>${r.serves} ${esc(unitWord(r.unit,r.serves))}</dd></div></dl>
