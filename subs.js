@@ -1,6 +1,12 @@
 /* Ingredient substitutions: [pattern on the English ingredient name, A => options]. A(mult, unit) gives the scaled amount. */
 window.SOFRA_SUBS=(function(){return [
 [/optional/,A=>['It’s optional. Leave it out and carry on.']],
+[/za.?atar/,A=>['Dried thyme or oregano mixed with sumac, toasted sesame and a pinch of salt (about 2:1:1).']],
+[/grape juice/,A=>[`${A(1)} pomegranate or cherry juice, unsweetened.`]],
+[/puff pastry/,A=>['Filo, brushed with butter and stacked 6 sheets thick for each puff pastry sheet.']],
+[/tkemali|sour plum|alycha/,A=>['Pomegranate molasses or lemon juice, a spoonful at a time, to taste.']],
+[/fava/,A=>[`${A(1)} tinned chickpeas or borlotti beans.`]],
+[/kefir/,A=>[`${A(.7)} plain yogurt loosened with ${A(.3)} milk.`]],
 [/buckwheat/,A=>[`${A(1)} bulgur or brown rice, cooked the same way.`]],
 [/pekmez|grape molasses/,A=>[`${A(1)} date syrup, honey or maple syrup, loosened with the same water.`]],
 [/currant/,A=>[`${A(1)} raisins, chopped.`]],

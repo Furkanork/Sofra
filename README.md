@@ -2,7 +2,7 @@
 
 ![Sofra](og-image.png)
 
-A recipe box of home cooking from Turkish, Persian, Italian, Greek, Russian & Ukrainian, Lebanese, Georgian, Azerbaijani and Balkan kitchens, plus a few bakes from further afield. 141 recipes, from breakfast and soups to meze, mains and desserts. In English or Turkish.
+A recipe box of home cooking from Turkish, Persian, Italian, Greek, Russian & Ukrainian, Lebanese, Georgian, Azerbaijani and Balkan kitchens, plus a few bakes from further afield. 171 recipes, from breakfast and soups to meze, mains and desserts. In English or Turkish.
 
 **Open it:** https://furkanork.github.io/Sofra/
 
